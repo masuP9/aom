@@ -1,4 +1,4 @@
-## The Accessibility Object Model (AOM)
+## The Accessibility Object Model (AOM) 日本語訳
 
 This effort aims to create a JavaScript API to allow developers to
 modify (and eventually explore) the accessibility tree for an HTML
@@ -15,7 +15,7 @@ page.
 
 Read the [Explainer](./explainer.md)
 
-Read the [Spec](https://wicg.github.io/aom/spec/) - note, not up-to-date
+Read the [Spec](/spec/) - note, not up-to-date
 
 [Can I Use](./caniuse.md) AOM in Chrome, Safari, or Firefox today?
 
