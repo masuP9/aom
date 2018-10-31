@@ -1,6 +1,6 @@
-# Accessibility Object Model
+# アクセシビリティオブジェクトモデル
 
-**Authors:**
+**著者:**
 
 * Alice Boxhall, Google, aboxhall@google.com
 * James Craig, Apple, jcraig@apple.com
@@ -11,8 +11,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-  - [Introduction](#introduction)
   - [Motivating use cases](#motivating-use-cases)
+  - [はじめに](#introduction)
   - [The Accessibility Object Model](#the-accessibility-object-model)
     - [Reflecting ARIA attributes](#reflecting-aria-attributes)
     - [Reflecting Element references](#reflecting-element-references)
@@ -43,12 +43,6 @@
   - [Appendix: `AccessibleNode` naming](#appendix-accessiblenode-naming)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-## Introduction
-
-This effort aims to create a JavaScript API
-to allow developers to modify (and eventually explore) the accessibility tree
-for an HTML page.
 
 ## Motivating use cases
 
@@ -86,6 +80,10 @@ in particular, they are much less expressive than the native APIs that the brows
      and position/dimensions.
 5. Introspecting the computed accessibility tree
    - Developers currently have no way to probe or test how ARIA and other accessible properties are applied.
+## はじめに
+
+このJavaScript APIを作る努力の目的は、開発者にHTMLページのアクセシビリティツリーの変更（ゆくゆくは探索）までを許可するためである。
+
 
 ## The Accessibility Object Model
 
