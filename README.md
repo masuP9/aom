@@ -15,7 +15,7 @@ page.
 
 Read the [Explainer](./explainer.md)
 
-Read the [Spec](/spec/) - note, not up-to-date
+Read the [Spec](http://masup9.github.io/aom/) - note, not up-to-date
 
 [Can I Use](./caniuse.md) AOM in Chrome, Safari, or Firefox today?
 
