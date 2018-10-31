@@ -13,7 +13,7 @@
 
   - [はじめに](#introduction)
   - [モチベーションとなるユースケース](#motivating-use-cases)
-  - [The Accessibility Object Model](#the-accessibility-object-model)
+  - [アクセシビリティオブジェクトモデル](#the-accessibility-object-model)
     - [Reflecting ARIA attributes](#reflecting-aria-attributes)
     - [Reflecting Element references](#reflecting-element-references)
       - [Use case 2: Setting relationship properties without needing to use IDREFs](#use-case-2-setting-relationship-properties-without-needing-to-use-idrefs)
@@ -30,7 +30,7 @@
       - [Use case 5:  Introspecting the computed tree](#use-case-5--introspecting-the-computed-tree)
       - [Why is accessing the computed properties being addressed last?](#why-is-accessing-the-computed-properties-being-addressed-last)
     - [Audience for the proposed API](#audience-for-the-proposed-api)
-    - [What happened to `AccessibleNode`?](#what-happened-to-accessiblenode)
+    - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
   - [Next Steps](#next-steps)
     - [Incubation](#incubation)
   - [Additional thanks](#additional-thanks)
@@ -72,13 +72,11 @@
 5. 計算済のアクセシビリティツリーの確認
    - 開発者は現在、ARIAやその他のアクセシブルプロパティがどのように適用されているかを調べたりテストする方法を持っていない。
 
-## The Accessibility Object Model
+## アクセシビリティオブジェクトモデル
 
-The Accessibility Object Model (AOM) is a set of changes to HTML and related standards
-to address the use cases above.
+アクセシビリティオブジェクトモデル (AOM)は、上記のユースケースに取り組むためのHTMLや関連する標準に対する一連の変更である。
 
-(Note: If you were familiar with an earlier version of AOM,
-you might be wondering [what happened to `AccessibleNode`?](#what-happened-to-accessiblenode))
+(注: 以前のバージョンのAOMに慣れ親しんでいれば、[`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode))と疑問を持つかもしれない。
 
 ### Reflecting ARIA attributes
 
@@ -627,7 +625,7 @@ using low-level APIs like Canvas.
 These development teams have the resources to make accessibility a priority too, 
 but existing APIs make it very cumbersome.
 
-### What happened to `AccessibleNode`?
+### `AccessibleNode`に何が起こったのか?
 
 Initially, our intention was to combine these use cases into a read/write API
 analogous to the DOM,
