@@ -11,8 +11,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-  - [Motivating use cases](#motivating-use-cases)
   - [はじめに](#introduction)
+  - [モチベーションとなるユースケース](#motivating-use-cases)
   - [The Accessibility Object Model](#the-accessibility-object-model)
     - [Reflecting ARIA attributes](#reflecting-aria-attributes)
     - [Reflecting Element references](#reflecting-element-references)
@@ -34,7 +34,7 @@
   - [Next Steps](#next-steps)
     - [Incubation](#incubation)
   - [Additional thanks](#additional-thanks)
-- [Appendices](#appendices)
+- [付録](#appendices)
   - [Background: assistive technology and the accessibility tree](#background-assistive-technology-and-the-accessibility-tree)
     - [Accessibility node properties](#accessibility-node-properties)
   - [Background: DOM tree, accessibility tree and platform accessibility APIs](#background-dom-tree-accessibility-tree-and-platform-accessibility-apis)
@@ -44,46 +44,33 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Motivating use cases
-
-(More background on existing APIs can be found in the [Appendices](#appendices).)
-
-Web apps that push the boundaries of what's possible on the web struggle to make them accessible
-because the APIs aren't yet sufficient -
-in particular, they are much less expressive than the native APIs that the browser communicates with.
-
-1. Setting non-reflected (“default”) accessibility properties for [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) which can be overridden by page authors
-    - Currently, Web Components are forced to use ARIA to declare their default semantics.
-    This causes ARIA attributes which are really implementation details 
-    to "leak" into the DOM. 
-    - This capability _need not_, but _may_ be limited to Web Components.
-2.  Setting [relationship properties](https://www.w3.org/TR/wai-aria-1.1/#attrs_relationships) without needing to use IDREFs
-    - Currently, to specify any ARIA relationship,
-     an author must specify a unique ID on any element which may be the target
-     of the relationship.
-    - In the case of something like 
-    [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.1/#aria-activedescendant),
-    this may be one of hundreds or thousands of elements, 
-    depending on the UI.
-    This requirement makes these APIs cumbersome to use
-    and lead to many extra DOM attributes being necessary.
-3. Listening for events from Assistive Technology
-   - Currently, _only_ built-in elements have the capability to react to events,
-     typically triggered by user actions such as 
-     ["simulated click"](https://developer.android.com/reference/android/view/accessibility/AccessibilityEvent.html#TYPE_VIEW_CLICKED) 
-     or ["increment"](https://developer.apple.com/documentation/objectivec/nsobject/1615076-accessibilityincrement).
-4. Adding non-DOM nodes (“virtual nodes”) to the Accessibility tree 
-   - For example, to express a complex UI built out of a `<canvas>` element,
-     or streaming a remote desktop to a `<video>` element, etc.
-   - These should be able to express at least the same set of accessible properties as Elements, 
-     as well as parent/child/other relationships with other virtual nodes, 
-     and position/dimensions.
-5. Introspecting the computed accessibility tree
-   - Developers currently have no way to probe or test how ARIA and other accessible properties are applied.
 ## はじめに
 
 このJavaScript APIを作る努力の目的は、開発者にHTMLページのアクセシビリティツリーの変更（ゆくゆくは探索）までを許可するためである。
 
+## モチベーションとなるユースケース
+
+既存のAPIの背景は[付録](#appendices)で見つけることができる。
+
+ウェブ上でできることの境界を押し広げているウェブアプリケーションは、APIが不十分なためそれらをアクセシブルにするため苦闘している。特に、ブラウザとやりとりするネイティブAPIと比較して表現力に劣っている。
+
+1. ページの著者が上書きできる[ウェブコンポーネント](https://developer.mozilla.org/en-US/docs/Web/Web_Components)のデフォルトアクセシビリティプロパティの設定
+    - 現在、ウェブコンポーネントのデフォルトセマンティクスを定義するにはARIAを使用しなければならない。
+    これにより、真に詳細な実装であるARIA属性がDOMに「リーク」してしまう。
+    - このことは必要では _なく_ ウェブコンポーネントに限られる _かも_ 知れない。
+2. IDREFs を必要としない[関係属性](https://www.w3.org/TR/wai-aria-1.1/#attrs_relationships)の設定
+    - 現在、いくつかのARIAの関係を示すには、著者が一意のIDを関係の対象となりうる要素に指定しなければならない
+    - [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.1/#aria-activedescendant)のような場合、
+    それはUIに応じて、数百ないしは数千もの要素のうち、一つを参照するかもしれない。
+    この要求は、多くの余分なDOMの属性が必要となり、これらのAPIを複雑にする。
+3. 支援技術からのイベントをリスニングする
+   - 現在、組み込み要素 _だけ_ がイベントに反応することができ、
+   通常、["simulated click"](https://developer.android.com/reference/android/view/accessibility/AccessibilityEvent.html#TYPE_VIEW_CLICKED) や ["increment"](https://developer.apple.com/documentation/objectivec/nsobject/1615076-accessibilityincrement) のようなユーザーアクションによって引き起こされる。
+4. アクセシビリティツリーにDOMでないノード（仮想ノード）を追加する
+   - 例えば、`<canvas>` 要素で構築された複雑なUIや、`<video>` 要素を用いたリモートデスクトップのストリーミングなどを表現するなど
+   - そのためには、少なくとも要素と同じようなアクセシビリティプロパティや、他の仮想ノードとの親/子/その他の関係性、位置や次元を表す必要がある。
+5. 計算済のアクセシビリティツリーの確認
+   - 開発者は現在、ARIAやその他のアクセシブルプロパティがどのように適用されているかを調べたりテストする方法を持っていない。
 
 ## The Accessibility Object Model
 
@@ -710,7 +697,7 @@ Many thanks for valuable feedback, advice, and tools from:
 Bogdan Brinza and Cynthia Shelley of Microsoft were credited as authors of an
 earlier draft of this spec but are no longer actively participating.
 
-# Appendices
+# 付録
 
 ## Background: assistive technology and the accessibility tree
 
