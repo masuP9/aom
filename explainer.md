@@ -13,7 +13,7 @@
 
   - [はじめに](#introduction)
   - [モチベーションとなるユースケース](#motivating-use-cases)
-  - [The Accessibility Object Model](#the-accessibility-object-model)
+  - [アクセシビリティオブジェクトモデル](#the-accessibility-object-model)
     - [Reflecting ARIA attributes](#reflecting-aria-attributes)
     - [Reflecting Element references](#reflecting-element-references)
       - [Use case 2: Setting relationship properties without needing to use IDREFs](#use-case-2-setting-relationship-properties-without-needing-to-use-idrefs)
@@ -30,7 +30,7 @@
       - [Use case 5:  Introspecting the computed tree](#use-case-5--introspecting-the-computed-tree)
       - [Why is accessing the computed properties being addressed last?](#why-is-accessing-the-computed-properties-being-addressed-last)
     - [Audience for the proposed API](#audience-for-the-proposed-api)
-    - [What happened to `AccessibleNode`?](#what-happened-to-accessiblenode)
+    - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
   - [Next Steps](#next-steps)
     - [Incubation](#incubation)
   - [Additional thanks](#additional-thanks)
@@ -72,59 +72,50 @@
 5. 計算済のアクセシビリティツリーの確認
    - 開発者は現在、ARIAやその他のアクセシブルプロパティがどのように適用されているかを調べたりテストする方法を持っていない。
 
-## The Accessibility Object Model
+## アクセシビリティオブジェクトモデル
 
-The Accessibility Object Model (AOM) is a set of changes to HTML and related standards
-to address the use cases above.
+アクセシビリティオブジェクトモデル (AOM)は、上記のユースケースに取り組むためのHTMLや関連する標準に対する一連の変更である。
 
-(Note: If you were familiar with an earlier version of AOM,
-you might be wondering [what happened to `AccessibleNode`?](#what-happened-to-accessiblenode))
+(注: 以前のバージョンのAOMに慣れ親しんでいれば、[`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode))と疑問を持つかもしれない。
 
-### Reflecting ARIA attributes
+### ARIA属性を反映する
 
-We will 
-[reflect](https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflect) 
-ARIA attributes on HTML elements.
+ARIA 属性をHTML要素に[反映する](https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflect)。
 
-This is now a part of the [ARIA 1.2 spec](https://www.w3.org/TR/wai-aria-1.2/#idl-interface).
+これは今[ARIA 1.2の仕様](https://www.w3.org/TR/wai-aria-1.2/#idl-interface)の一部となった。
 
 ```js
 el.role = "button";
-el.ariaPressed = "true";  // aria-pressed is a tristate attribute
-el.ariaDisabled = true;   // aria-disabled is a true/false attribute
+el.ariaPressed = "true";  // aria-pressed は3つのステートを持つ属性
+el.ariaDisabled = true;   // aria-disabled は true/false を持つ属性
 ```
 
-### Reflecting Element references
+### 要素の参照を反映する
 
-Straight reflection of ARIA properties 
-would reflect relationship attributes like `aria-labelledby` as strings:
+ARIAプロパティを直接反映、`aria-labelledby` のような関係属性の文字列に反映させる。
 
 ```js
 el.ariaDescribedBy = "id1";
 ```
 
-results in
+結果は
+
 ```html
 <div aria-describedby="id1">
 ```
 
-We propose augmenting this API with non-reflected properties 
-which take element references:
+要素を参照する非反映のプロパティでAPIを拡張することを提案
 
 ```js
 el.ariaDescribedByElements = [labelElement1, labelElement2];
 el.ariaActiveDescendantElement = ownedElement1;
 ```
 
-This would allow specifying semantic relationships between elements
-without the need to assign globally unique ID attributes to each element
-which participates in a relationship.
+これにより、関係に属するそれぞれの要素にグローバルに固有のID属性を割り当てることなく要素間のセマンティクスの関係性を示すことができる。
 
-Moreover, this would enable authors using open `ShadowRoot`s
-to specify relationships which cross over Shadow DOM boundaries.
+さらにこれは、`ShadowRoot`を使用した著者がShadow DOMの境界を超えて関係性を明示することを可能にする
 
-This API is being [proposed](https://github.com/whatwg/html/issues/3515)
-as a change to the WHATWG HTML spec.
+このAPIはWHATWG HTML仕様の変更として提案されている。
 
 #### Use case 2: Setting relationship properties without needing to use IDREFs
 
@@ -627,7 +618,7 @@ using low-level APIs like Canvas.
 These development teams have the resources to make accessibility a priority too, 
 but existing APIs make it very cumbersome.
 
-### What happened to `AccessibleNode`?
+### `AccessibleNode`に何が起こったのか?
 
 Initially, our intention was to combine these use cases into a read/write API
 analogous to the DOM,
