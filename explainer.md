@@ -78,18 +78,16 @@
 
 (注: 以前のバージョンのAOMに慣れ親しんでいれば、[`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode))と疑問を持つかもしれない。
 
-### Reflecting ARIA attributes
+### ARIA属性を反映する
 
-We will 
-[reflect](https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflect) 
-ARIA attributes on HTML elements.
+ARIA 属性をHTML要素に[反映する](https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflect)。
 
-This is now a part of the [ARIA 1.2 spec](https://www.w3.org/TR/wai-aria-1.2/#idl-interface).
+これは今[ARIA 1.2の仕様](https://www.w3.org/TR/wai-aria-1.2/#idl-interface)の一部となった。
 
 ```js
 el.role = "button";
-el.ariaPressed = "true";  // aria-pressed is a tristate attribute
-el.ariaDisabled = true;   // aria-disabled is a true/false attribute
+el.ariaPressed = "true";  // aria-pressed は3つのステートを持つ属性
+el.ariaDisabled = true;   // aria-disabled は true/false を持つ属性
 ```
 
 ### Reflecting Element references
