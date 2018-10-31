@@ -90,37 +90,32 @@ el.ariaPressed = "true";  // aria-pressed は3つのステートを持つ属性
 el.ariaDisabled = true;   // aria-disabled は true/false を持つ属性
 ```
 
-### Reflecting Element references
+### 要素の参照を反映する
 
-Straight reflection of ARIA properties 
-would reflect relationship attributes like `aria-labelledby` as strings:
+ARIAプロパティを直接反映、`aria-labelledby` のような関係属性の文字列に反映させる。
 
 ```js
 el.ariaDescribedBy = "id1";
 ```
 
-results in
+結果は
+
 ```html
 <div aria-describedby="id1">
 ```
 
-We propose augmenting this API with non-reflected properties 
-which take element references:
+要素を参照する非反映のプロパティでAPIを拡張することを提案
 
 ```js
 el.ariaDescribedByElements = [labelElement1, labelElement2];
 el.ariaActiveDescendantElement = ownedElement1;
 ```
 
-This would allow specifying semantic relationships between elements
-without the need to assign globally unique ID attributes to each element
-which participates in a relationship.
+これにより、関係に属するそれぞれの要素にグローバルに固有のID属性を割り当てることなく要素間のセマンティクスの関係性を示すことができる。
 
-Moreover, this would enable authors using open `ShadowRoot`s
-to specify relationships which cross over Shadow DOM boundaries.
+さらにこれは、`ShadowRoot`を使用した著者がShadow DOMの境界を超えて関係性を明示することを可能にする
 
-This API is being [proposed](https://github.com/whatwg/html/issues/3515)
-as a change to the WHATWG HTML spec.
+このAPIはWHATWG HTML仕様の変更として提案されている。
 
 #### Use case 2: Setting relationship properties without needing to use IDREFs
 
