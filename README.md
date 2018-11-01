@@ -1,24 +1,22 @@
 ## The Accessibility Object Model (AOM) 日本語訳
 
-This effort aims to create a JavaScript API to allow developers to
-modify (and eventually explore) the accessibility tree for an HTML
-page.
+このJavaScript APIを作る努力の目的は、開発者にHTMLページのアクセシビリティツリーの変更（ついには探索まで）を許可するためである。
 
-## Editors:
+## 編集者:
 
 * Alice Boxhall, Google, aboxhall@google.com
 * James Craig, Apple, jcraig@apple.com
 * Dominic Mazzoni, Google, dmazzoni@google.com
 * Alexander Surkov, Mozilla, surkov.alexander@gmail.com
 
-## Details
+## 詳細
 
-Read the [Explainer](./explainer.md)
+[解説を読む](./explainer.md)
 
-Read the [Spec](http://masup9.github.io/aom/spec/) - note, not up-to-date
+[仕様を読む](http://masup9.github.io/aom/spec/) - 注:アップデートしていない
 
-[Can I Use](./caniuse.md) AOM in Chrome, Safari, or Firefox today?
+[Can I Use](./caniuse.md) Chrome、Safari、Firefox のAOM対応状況
 
-[Interactive Slide Deck](http://wicg.github.io/aom/demos/) (for Chrome)
+[インタラクティブスライドデッキ](http://wicg.github.io/aom/demos/) (for Chrome)
 
-[Tic-tac-toe demo](http://wicg.github.io/aom/demos/tictactoe.html) (for Chrome)
+[Tic-tac-toe デモ](http://wicg.github.io/aom/demos/tictactoe.html) (for Chrome)
