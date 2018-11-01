@@ -117,14 +117,14 @@ el.ariaActiveDescendantElement = ownedElement1;
 
 このAPIはWHATWG HTML仕様の変更として提案されている。
 
-#### Use case 2: Setting relationship properties without needing to use IDREFs
+#### ユースケース 2: IDREFsを使用することなく関係プロパティを設定する
 
-Today, an author attempting to express a relationship across Shadow DOM boundaries
-might attempt using `aria-activedescendant` like this:
+現在、Shadow DOMの境界を超えて関係を表そうとする著者は次のように `aria-activedescendant` の使用を試すだろう。
+
 ```html
 <custom-combobox>
   #shadow-root (open)
-  |  <!-- this doesn't work! -->
+  |  <!-- これはうまくいかない！ -->
   |  <input aria-activedescendant="opt1"></input>
   |  <slot></slot>
   <custom-optionlist>
@@ -135,10 +135,9 @@ might attempt using `aria-activedescendant` like this:
 </custom-combobox>
 ```
 
-This fails, because IDREFs are scoped within the shadowRoot
-or document context in which they appear.
+これは失敗で、なぜならIDREFsはshadowRoot、またはそれらが現れる文書の文脈の範囲に限られる。
 
-An author could specify this relationship programmatically instead:
+著者は代わりにこの関係性をプログラムで示すことができる。
 
 ```js
 const input = comboBox.shadowRoot.querySelector("input");
@@ -148,8 +147,9 @@ input.activeDescendantElement = optionList.firstChild;
 
 This would allow the relationship to be expressed naturally.
 
-This API is being discussed in [issue #3513](https://github.com/whatwg/html/issues/3515#issuecomment-413716944) 
-on the WHATWG HTML repository.
+このことにより、関係が自然に表現されるようになる。
+
+このAPIはWHATWG HTMLリポジトリの[issue #3513](https://github.com/whatwg/html/issues/3515#issuecomment-413716944)で議論されている。
 
 ### Custom Elements APIs
 
