@@ -14,13 +14,13 @@
   - [はじめに](#introduction)
   - [モチベーションとなるユースケース](#motivating-use-cases)
   - [アクセシビリティオブジェクトモデル](#the-accessibility-object-model)
-    - [Reflecting ARIA attributes](#reflecting-aria-attributes)
-    - [Reflecting Element references](#reflecting-element-references)
+    - [ARIA属性を反映する](#reflecting-aria-attributes)
+    - [要素の参照を反映する](#reflecting-element-references)
       - [Use case 2: Setting relationship properties without needing to use IDREFs](#use-case-2-setting-relationship-properties-without-needing-to-use-idrefs)
-    - [Custom Elements APIs](#custom-elements-apis)
-      - [Use case 1: Setting non-reflected (“default”) accessibility properties for Web Components](#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components)
-        - [Default semantics via customElements.define()](#default-semantics-via-customelementsdefine)
-        - [Per-instance, dynamic semantics via the `createdCallback()` reaction](#per-instance-dynamic-semantics-via-the-createdcallback-reaction)
+    - [Custom ElementsのAPI](#custom-elements-apis)
+      - [ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する](#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components)
+        - [customElements.define() を利用したデフォルトセマンティクス](#default-semantics-via-customelementsdefine)
+        - [`ElementInternals` オブジェクトを利用した動的なインスタンス単位のセマンティクス](#per-instance-dynamic-semantics-via-the-createdcallback-reaction)
     - [User action events from Assistive Technology](#user-action-events-from-assistive-technology)
       - [New InputEvent types](#new-inputevent-types)
       - [Use case 3: Listening for events from Assistive Technology](#use-case-3-listening-for-events-from-assistive-technology)
@@ -117,14 +117,14 @@ el.ariaActiveDescendantElement = ownedElement1;
 
 このAPIはWHATWG HTML仕様の変更として提案されている。
 
-#### Use case 2: Setting relationship properties without needing to use IDREFs
+#### ユースケース 2: IDREFsを使用することなく関係プロパティを設定する
 
-Today, an author attempting to express a relationship across Shadow DOM boundaries
-might attempt using `aria-activedescendant` like this:
+現在、Shadow DOMの境界を超えて関係を表そうとする著者は次のように `aria-activedescendant` の使用を試すだろう。
+
 ```html
 <custom-combobox>
   #shadow-root (open)
-  |  <!-- this doesn't work! -->
+  |  <!-- これはうまくいかない！ -->
   |  <input aria-activedescendant="opt1"></input>
   |  <slot></slot>
   <custom-optionlist>
@@ -135,10 +135,9 @@ might attempt using `aria-activedescendant` like this:
 </custom-combobox>
 ```
 
-This fails, because IDREFs are scoped within the shadowRoot
-or document context in which they appear.
+これは失敗で、なぜならIDREFsはshadowRoot、またはそれらが現れる文書の文脈の範囲に限られる。
 
-An author could specify this relationship programmatically instead:
+著者は代わりにこの関係性をプログラムで示すことができる。
 
 ```js
 const input = comboBox.shadowRoot.querySelector("input");
@@ -148,29 +147,27 @@ input.activeDescendantElement = optionList.firstChild;
 
 This would allow the relationship to be expressed naturally.
 
-This API is being discussed in [issue #3513](https://github.com/whatwg/html/issues/3515#issuecomment-413716944) 
-on the WHATWG HTML repository.
+このことにより、関係が自然に表現されるようになる。
 
-### Custom Elements APIs
+このAPIはWHATWG HTMLリポジトリの[issue #3513](https://github.com/whatwg/html/issues/3515#issuecomment-413716944)で議論されている。
 
-We propose that Custom Element authors be able to provide static, default semantics
-via the `customElements.define()` options,
-and dynamic, per-element semantics via a configuration callback.
+### Custom ElementsのAPI
 
-#### Use case 1: Setting non-reflected (“default”) accessibility properties for Web Components
+Custom Elementの著者が `customElements.define()` オプションを用いて静的なデフォルトセマンティクス、または設定されたコールバックを用いて動的に要素ごとのセマンティクスを提供できることを提案する。
 
-Today, a library author creating a Web Component is forced to "sprout" ARIA attributes
-to express semantics which are implicit for native elements.
+#### ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する
+
+今、ウェブコンポーネントを制作するライブラリの著者はネイティブ要素にとっては暗黙であるセマンティクスを表すためにARIA属性を"生やす"ことを強いられている。
 
 ```html
-<!-- Page author uses the custom elements as they would native elements -->
+<!-- ページの著者はCustom elementをネイティブ要素を使用するように使用する -->
 <custom-tablist>
   <custom-tab selected>Tab 1</custom-tab>
   <custom-tab>Tab 2</custom-tab>
   <custom-tab>Tab 3</custom-tab>
 </custom-tablist>
 
-<!-- Custom elements are forced to "sprout" extra attributes to express semantics -->
+<!-- Custom elements がセマンティクスを表すために余分な属性を"生やす"ことを強制される -->
 <custom-tablist role="tablist">
   <custom-tab selected role="tab" aria-selected="true" aria-controls="tabpanel-1">Tab 1</custom-tab>
   <custom-tab role="tab" aria-controls="tabpanel-2">Tab 2</custom-tab>
@@ -178,23 +175,17 @@ to express semantics which are implicit for native elements.
 </custom-tablist>
 ```
 
-##### Default semantics via customElements.define()
+##### customElements.define() を利用したデフォルトセマンティクス
 
-Authors may provide immutable default semantics for a custom element
-by setting properties via the `ElementDefinitionOptions` object
-passed in to the `CustomElementRegistry.define()` method.
+著者は `CustomElementRegistry.define()` メソッドに渡された `ElementDefinitionOptions` オブジェクトを利用して、不変のデフォルトセマンティクスをカスタム要素に提供することもできる。
 
-The properties set on the `ElementDefinitionOptions` object
-become the default values to be used
-when mapping the custom element to an accessible object.
+`ElementDefinitionOptions` オブジェクトに設定されたプロパティは、カスタム要素をアクセシブルなオブジェクトにマッピングする際に、デフォルトの値として利用される。
 
-Note: this is analogous to creating an "immutable class variable" -
-these semantic properties are associated with the custom element definition,
-not with each custom element instance.
-The semantics they define apply to *all* instances of the custom element.
+注: これは "不変なクラス変数" を作るのに類似している。これらのセマンティクスプロパティはカスタム要素の定義に関連付けられていて、カスタム要素のインスタンスには関連していない。
 
-For example, an author creating a custom tab control may define three custom elements
-for the individual tabs, the tab list and the tab panel:
+定義されたセマンティクスは *すべての* カスタム要素のインスタンスに適用される。
+
+例えば、カスタムタブコントロールを作成する著者は、タブ、タブリスト、タブパネルの3つのカスタム要素を個々に定義することができる。
 
 ```js
 class TabListElement extends HTMLElement { ... }
@@ -210,26 +201,19 @@ customElements.define("custom-tabpanel", TabPanelElement,
                       { role: "tabpanel" });
 ```
 
-When a `<custom-tab>` element is mapped into the accessibility tree,
-by default it will have a mapped role of tab.
+`<custom-tab>`がアクセシビリティツリーにマッピングされるとき、タブのロールがデフォルトでマッピングされる。
 
-This is analogous to how a `<button>` element is, by default,
-mapped to an accessible object with a role of button.
+これは `button` 要素がデフォルトでボタンのロールを持ってアクセシビリティオブジェクトにマッピングされるのに似ている。
 
-##### Per-instance, dynamic semantics via the `ElementInternals` object
+##### `ElementInternals` オブジェクトを利用した動的なインスタンス単位のセマンティクス
 
-This is being [discussed as part of the W3C Web Components project](https://github.com/w3c/webcomponents/issues/758).
+これは[W3C Web Componentsプロジェクトの一部として議論されている](https://github.com/w3c/webcomponents/issues/758).
 
-A custom element author may use the `ElementInternals`  object
-to modify the semantic state of an instance of a custom element
-in response to user interaction.
+カスタム要素の著者は `ElementInternals` オブジェクトを、ユーザーインタラクションに応じてカスタム要素のインスタンスのセマンティクスの状態を変更するのに利用できる。
 
-The properties set on the `ElementInternals` object
-are used when mapping the element to an accessible object.
+`ElementInternals` オブジェクトにセットされたプロパティはアクセシビリティオブジェクトに要素をマッピングされる際に利用される。
 
-Note: this is analogous to setting an "instance variable" -
-a copy of these semantic properties is created for each instance of the custom element.
-The semantics defined in each apply only to their associated custom element instance object.
+注: これは "インスタンス変数" を設定するのに類似している。セマンティクスプロパティのコピーはカスタム要素のインスタンス毎に作られる。それぞれに定義されたセマンティクスは関連するカスタム要素のインスタンスオブジェクトにのみ関連付けられる。
 
 ```js
 class CustomTab extends HTMLElement {
@@ -243,7 +227,7 @@ class CustomTab extends HTMLElement {
     this.#internals.role = "tab";
   }
 
-  // Observe the custom "active" attribute.
+  // カスタム "active" 属性を監視する
   static get observedAttributes() { return ["active"]; }
 
   connectedCallback() {
@@ -252,14 +236,14 @@ class CustomTab extends HTMLElement {
 
   setTabPanel(tabpanel) {
     if (tabpanel.localName !== "custom-tabpanel" || tabPanel.id === "")
-      return;  // fail silently
+      return;  // 静かに失敗する
 
     this.#tabpanel = tabpanel;
     tabpanel.setTab(this);
-    this.#internals.ariaControls = tabPanel;    // does not reflect
+    this.#internals.ariaControls = tabPanel;    // 反映されない
   }
 
-  // ... setters/getters for custom properties which reflect to attributes
+  // 属性に反映するカスタムプロパティの setters/getters
 
   attributeChangedCallback(name, oldValue, newValue) {
     switch(name) {
@@ -267,12 +251,12 @@ class CustomTab extends HTMLElement {
         let active = (newValue != null);
         this.#tabpanel.shown = active;
 
-        // When the custom "active" attribute changes,
-        // keep the accessible "selected" state in sync.
+        // カスタム "active" 属性が変更された時、
+        // アクセシブルな "selected" ステートを同期し続ける
         this.#internals.ariaSelected = (newValue !== null);
 
         if (selected)
-          this.#tablist.setSelectedTab(this);  // ensure no other tab has "active" set
+          this.#tablist.setSelectedTab(this);  // 他のタブが "active" で無いことを保証
         break;
     }
   }
@@ -281,13 +265,9 @@ class CustomTab extends HTMLElement {
 customElements.define("custom-tab", CustomTab, { role: "tab", needsElementInternals: true });
 ```
 
-Authors using these elements may override the default semantics
-using ARIA attributes as normal.
+これらの要素を使用する著者は通常通りARIAを用いてデフォルトセマンティクスを上書きすることができる。
 
-For example, an author may modify the appearance
-of a `<custom-tablist>` element to appear as a vertical list.
-They could add an `aria-orientation` attribute to indicate this,
-overriding the default semantics set in the custom element definition.
+例えば、著者は `<custom-tablist>` 要素の見た目を縦並びに変更できる。彼らはそれを示すために `aria-orientation` 属性を追加することで、カスタム要素に定義されているデフォルトセマンティクスを上書きすることができる。
 
 ```html
 <custom-tablist aria-orientation="vertical" class="vertical-tablist">
@@ -297,11 +277,9 @@ overriding the default semantics set in the custom element definition.
 </div>
 ```
 
-Because the author-provided role overrides the default role,
-the <a>mapped</a> role will be based on the author-provided role in each case.
+著者が提供するロールがデフォルトのロールを上書きするので、それぞれの場合においてマッピングされるロールは著者が提供するロールに基づく。
 
-If the author-provided semantics conflict with the Custom Element semantics,
-the author-provided semantics take precedence.
+仮に著者によって提供されたセマンティクスが Custom Element のセマンティクスと競合する場合でも著者が提供するセマンティクスが優先される。
 
 ### User action events from Assistive Technology
 
