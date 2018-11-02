@@ -24,8 +24,8 @@
     - [支援技術からのユーザーアクションイベント](#user-action-events-from-assistive-technology)
       - [新しい入力イベントタイプ](#new-inputevent-types)
       - [ユースケース 3: 支援技術からのイベントをリッスンする](#use-case-3-listening-for-events-from-assistive-technology)
-    - [Virtual Accessibility Nodes](#virtual-accessibility-nodes)
-      - [Use case 4: Adding non-DOM nodes (“virtual nodes”) to the Accessibility tree](#use-case-4-adding-non-dom-nodes-virtual-nodes-to-the-accessibility-tree)
+    - [仮想アクセシビリティノード](#virtual-accessibility-nodes)
+      - [ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する](#use-case-4-adding-non-dom-nodes-virtual-nodes-to-the-accessibility-tree)
     - [Full Introspection of an Accessibility Tree - `ComputedAccessibleNode`](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
       - [Use case 5:  Introspecting the computed tree](#use-case-5--introspecting-the-computed-tree)
       - [Why is accessing the computed properties being addressed last?](#why-is-accessing-the-computed-properties-being-addressed-last)
@@ -344,47 +344,42 @@ customSlider.addEventListener('keydown', (event) => {
 });
 ```
 
-### Virtual Accessibility Nodes
+### 仮想アクセシビリティノード
 
-**Virtual Accessibility Nodes** will allow authors
-to expose "virtual" accessibility nodes,
-which are not associated directly with any particular DOM element,
-to assistive technology.
+**仮想アクセシビリティノード** は著者が支援技術に特定のDOM要素に直接関係のない *仮想* のアクセシビリティノードに触れさせられることができるだろう。
 
-This mechanism is often present in native accessibility APIs,
-in order to allow authors more granular control over the accessibility
-of custom-drawn APIs.
+このメカニズムは、著者がカスタム描画APIのアクセシビリティをよりきめ細かくコントロールするためにネイティブアクセシビリティAPIによく存在する。
 
 ```IDL
-// An AccessibleNode represents a virtual accessible node.
+// AccessibuleNode は仮想のアクセシビリティノードを表している。
 interface AccessibleNode {
     attribute DOMString? role;
     attribute DOMString? name;
     
     attribute DOMString? autocomplete;
-    // ... all other ARIA-equivalent attributes
+    // ... その他すべてのARIAと同等の属性
 
-    // Non-ARIA equivalent attributes necessary for virtual nodes only
+    // 仮想ノードのためだけの重要なARIAと同等でない属性
     attribute DOMString? offsetLeft;
     attribute DOMString? offsetTop;
     attribute DOMString? offsetWidth;
     attribute DOMString? offsetHeight;
     attribute AccessibleNode? offsetParent;
 
-    // Only affects accessible focus
+    // アクセシブルフォーカスだけの影響
     boolean focusable;
 
-    // Tree walking
+    // ツリーをたどる
     readonly attribute AccessibleNode? parent;
     readonly attribute ComputedAccessibleNode? firstChild;
     readonly attribute ComputedAccessibleNode? lastChild;
     readonly attribute ComputedAccessibleNode? previousSibling;
     readonly attribute ComputedAccessibleNode? nextSibling;
 
-    // Actions
+    // アクション
     void focus();
 
-    // Tree modification
+    // ツリーの変更
     AccessibleNode insertBefore(AccessibleNode node, Node? child);
     AccessibleNode appendChild(AccessibleNode node);
     AccessibleNode replaceChild(AccessibleNode node, AccessibleNode child);
@@ -399,19 +394,18 @@ partial interface Element {
 }
 ```
 
-- Calling `attachAccessibleRoot()` causes an `AccessibleNode` to be associated with a `Node`.
-  - The returned `AccessibleNode` forms the root of a virtual accessibility tree.
-  - The Node's DOM children are implicitly ignored for accessibility once an `AccessibleRoot` is attached - there is no mixing of DOM children and virtual accessible nodes.
-- Like `ShadowRoot`, an element may only have one associated `AccessibleRoot`.
-- Only `AccessibleNode`s may have `AccessibleNodes` as children, 
-  and `AccessibleNode`s may only have `AccessibleNode`s as children.
+- `attachAccessibleRoot()` を実行することで `AccessibleNode` が `Node` に関連付けられる。
+  - リターンされた `AccessibleNode` は仮想アクセシビリティツリーのルートを形成する。
+  - そのノードのDOM子要素は、`AccessibleRoot` が付与されると、暗黙のうちに無視され、DOMの子要素と仮想アクセシブルノードが混在することはない。
+- `ShadowRoot` のように、一つの要素は一つの関連付けられた `AccessibleRoot` しか持たない。
+- `AccessibleNode` だけが子に `AccessibleNodes` 持ち、 `AccessibleNode` は `AccessibleNode` のみ子として持つ。
 
-#### Use case 4: Adding non-DOM nodes (“virtual nodes”) to the Accessibility tree 
+#### ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する
 
-For example, to express a complex UI built out of a `<canvas>` element:
+例えば、`<canvas>` 要素から構築された複雑なUIを表すには:
 
 ```js
-// Implementing a canvas-based spreadsheet's semantics
+// canvas ベースのスプレッドシートのセマンティクスを実現する
 canvas.attachAccessibleRoot();
 let table = canvas.accessibleRoot.appendChild(new AccessibleNode());
 table.role = 'table';
@@ -420,10 +414,10 @@ table.rowcount = 100;
 let headerRow = table.appendChild(new AccessibleNode());
 headerRow.role = 'row';
 headerRow.rowindex = 0;
-// etc. etc.
+// などなど
 ```
 
-Virtual nodes will typically need to have location and dimensions set explicitly:
+仮想ノードは通常位置と寸法を明示的に設定する必要がある。
 
 ```js
 cell.offsetLeft = "30px";
@@ -433,32 +427,25 @@ cell.offsetHeight = "300px";
 cell.offsetParent = table;
 ```
 
-If offsetParent is left unset, 
-the coordinates are interpreted relative to the accessible node's parent.
+もし offsetParent を設定しない場合、アクセシブルノードの親を基準として解釈される。
 
-To make a node focusable, the `focusable` attribute can be set. 
-This is similar to setting tabIndex=-1 on a DOM element.
+ノードをフォー傘ブルにする場合、 `focusable` 属性を設定することができる。これは tabIndex=-1 をDOM要素に設定するのに似ている。
 
 ```js
 virtualNode.focusable = true;
 ```
 
-Virtual accessible nodes are not focusable by default.
+仮想アクセシブルノードはデフォルトではフォーカスできない。
 
-Finally, to focus an accessible node, call its focus() method.
+最後に、アクセシビリティノードにフォーカスするには、 focus() メソッドを実行する。
 
 ```js
 virtualNode.focus();
 ```
 
-When a virtual accessible node is focused, 
-input focus in the DOM is unchanged. 
-The focused accessible node is reported to assistive technology
-and other accessibility API clients, 
-but no DOM events are fired and document.activeElement is unchanged.
+仮想アクセシブルノードがフォーカスされたとき、DOMのフォーカスは変わらない。アクセシビリティノードのフォーカスは、支援技術や他のアクセシビリティAPIクライアントに伝わるが、DOMイベントは発火せず document.activeElementも変わらない。
 
-When the focused DOM element changes, accessible focus follows it:
-the DOM element's associated accessible node gets focused.
+DOM要素のフォーカスが変わった時、アクセシブルフォーカスも追従し、DOM要素に関連付けられたアクセシブルノードがフォーカスされる。
 
 ### Full Introspection of an Accessibility Tree - `ComputedAccessibleNode`
 
