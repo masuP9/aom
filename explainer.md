@@ -21,14 +21,14 @@
       - [ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する](#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components)
         - [customElements.define() を利用したデフォルトセマンティクス](#default-semantics-via-customelementsdefine)
         - [`ElementInternals` オブジェクトを利用した動的なインスタンス単位のセマンティクス](#per-instance-dynamic-semantics-via-the-createdcallback-reaction)
-    - [User action events from Assistive Technology](#user-action-events-from-assistive-technology)
-      - [New InputEvent types](#new-inputevent-types)
-      - [Use case 3: Listening for events from Assistive Technology](#use-case-3-listening-for-events-from-assistive-technology)
-    - [Virtual Accessibility Nodes](#virtual-accessibility-nodes)
-      - [Use case 4: Adding non-DOM nodes (“virtual nodes”) to the Accessibility tree](#use-case-4-adding-non-dom-nodes-virtual-nodes-to-the-accessibility-tree)
-    - [Full Introspection of an Accessibility Tree - `ComputedAccessibleNode`](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
-      - [Use case 5:  Introspecting the computed tree](#use-case-5--introspecting-the-computed-tree)
-      - [Why is accessing the computed properties being addressed last?](#why-is-accessing-the-computed-properties-being-addressed-last)
+    - [支援技術からのユーザーアクションイベント](#user-action-events-from-assistive-technology)
+      - [新しい入力イベントタイプ](#new-inputevent-types)
+      - [ユースケース 3: 支援技術からのイベントをリッスンする](#use-case-3-listening-for-events-from-assistive-technology)
+    - [仮想アクセシビリティノード](#virtual-accessibility-nodes)
+      - [ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する](#use-case-4-adding-non-dom-nodes-virtual-nodes-to-the-accessibility-tree)
+    - [`ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
+      - [ユースケース5: 計算されたツリーを確認する](#use-case-5--introspecting-the-computed-tree)
+      - [なぜ最終的に計算されたプロパティにアクセスするのか](#why-is-accessing-the-computed-properties-being-addressed-last)
     - [Audience for the proposed API](#audience-for-the-proposed-api)
     - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
   - [Next Steps](#next-steps)
@@ -281,27 +281,26 @@ customElements.define("custom-tab", CustomTab, { role: "tab", needsElementIntern
 
 仮に著者によって提供されたセマンティクスが Custom Element のセマンティクスと競合する場合でも著者が提供するセマンティクスが優先される。
 
-### User action events from Assistive Technology
+### 支援技術からのユーザーアクションイベント
 
-To preserve the privacy of assistive technology users,
-events from assistive technology will typically cause a synthesised DOM event to be triggered:
+支援技術ユーザーのプライバシーを保護するために、通常、支援技術からのイベントは合成されたDOMイベントを発生させる。
 
-| **AT event**     | **Targets**                                                                        | **DOM event**                                                                   |
-|------------------|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
-| `click`          | *all elements*                                                                     | `click`                                                                         |
-| `focus`          | *all elements*                                                                     | `focus`                                                                         |
-| `select`         | Elements whose mapped role is `cell` or `option`                                   | `click`                                                                         |
-| `scrollIntoView` | (n/a)                                                                              | No event                                                                        |
-| `dismiss`        | *all elements*                                                                     | Keypress sequence for `Escape` key                                              |
-| `contextMenu`    | *all elements*                                                                     | `contextmenu`                                                                   |
-| `scrollByPage`   | *all elements*                                                                     | Keypress sequence for `PageUp` or `PageDown` key, depending on scroll direction |
-| `increment`      | Elements whose mapped role is `progressbar`, `scrollbar`, `slider` or `spinbutton` | Keypress sequence for `Up` key                                                  |
-| `decrement`      | Elements whose mapped role is `progressbar`, `scrollbar`, `slider` or `spinbutton` | Keypress sequence for `Down` key                                                |
-| `setValue`       | Elements whose mapped role is `combobox`,`scrollbar`,`slider` or `textbox`         | TBD                                                                             |
+| **支援技術のイベント** | **ターゲット** | **DOMイベント** |
+|---------------------|--------------|----------------|
+| `click`             | *すべての要素* | `click` |
+| `focus`             | *すべての要素* | `focus` |
+| `select`            | `cell` または `option` ロールがマッピングされた要素 | `click` |
+| `scrollIntoView`    | (n/a) | イベントなし |
+| `dismiss`           | *すべての要素* | `Escape` キーのキーが押されたシーケンス |
+| `contextMenu`       | *すべての要素* | `contextmenu` |
+| `scrollByPage`      | *すべての要素* | スクロール方向に応じた `PageUp` または `PageDown` キーが押されたシーケンス |
+| `increment`         | `progressbar`、 `scrollbar`、 `slider` または `spinbutton` ロールがマッピングされた要素 | `Up` キーのキーが押されたシーケンス |
+| `decrement`         | `progressbar`、 `scrollbar`、 `slider` または `spinbutton` ロールがマッピングされた要素 | `Down` キーが押されたシーケンス |
+| `setValue`          | `combobox`、 `scrollbar`、 `slider` または `textbox` キーが押されたシーケンス | 未定  |
 
-#### New InputEvent types
+#### 新しい入力イベントタイプ
 
-We will also add some new [`InputEvent`](https://www.w3.org/TR/uievents/#inputevent) types:
+いくつかの[`Input Event`](https://www.w3.org/TR/uievents/#inputevent) タイプを追加する:
 
 * `increment`
 * `decrement`
@@ -309,59 +308,29 @@ We will also add some new [`InputEvent`](https://www.w3.org/TR/uievents/#inputev
 * `scrollPageUp`
 * `scrollPageDown`
 
-These will be triggered via assistive technology events,
-along with the synthesised keyboard events listed in the above table,
-and also synthesised when the keyboard events listed above
-occur in the context of a valid target for the corresponding assistive technology event.
+これらのイベントは上記の表に記載された合成キーボードイベントと共に支援技術のイベントから引き起こされ、
+また上記の関連する支援技術のイベントに対応した有効なターゲットの文脈の中で発生したときに合成される。
 
-For example,
-if a user not using assistive technology presses the `Escape` key in any context,
-an `input` event with a type of `dismiss` will be fired at the focused element
-along with the keypress sequence.
+例えば、もしある文脈で支援技術を使用していないユーザーが `Escape` キーを押した場合、キーが押されたシーケンスで `dismiss` タイプを伴った `input` イベントが発火する
 
-If the same user pressed `Up` while page focus was on
-a `<input type="range">` *or* an element with a role of `slider`
-(either of which will have a computed role of `slider`),
-an `input` event with a type of `increment` will be fired at the focused element
-along with the keypress sequence.
+もし同じユーザーが `<input type="range">` *または* （計算された `slider` ロールを含む）`slider` ロールを持った要素上にフォーカスがある `Up` キーを押した場合、キーが押されたシーケンスで `increment` タイプを伴った `input` イベントがフォーカスされた要素で発火される。
 
-#### Use case 3: Listening for events from Assistive Technology
+#### ユースケース 3: 支援技術からのイベントをリッスンする
 
-For example:
+例えば:
 
-* A user may be using voice control software and they may speak the name of a
-  button somewhere in a web page.
-  The voice control software finds the button matching that name in the
-  accessibility tree and sends an *action* to the browser to click on that button.
-* That same user may then issue a voice command to scroll down by one page.
-  The voice control software finds the root element for the web page and sends
-  it the scroll *action*.
-* A mobile screen reader user may navigate to a slider, then perform a gesture to
-  increment a range-based control.
-  The screen reader sends the browser an increment *action* on the slider element
-  in the accessibility tree.
+* ユーザーは音声制御ソフトウェアを利用しており、ウェブページの中のどこかのボタンの名前を読み上げられる。音声制御ソフトウェアはアクセシビリティツリーの中に該当する名前があるボタンを見つけ、クリックすることで *アクション* を送信することができる。
+* 同じユーザーはあるページをスクロールダウンする音声コマンドを発行する。その音声制御ソフトウェアはウェブページのルート要素を見つけ、スクロール *アクション* を送信する。
+* モバイルスクリーンリーダーユーザーは、スライダーに移動し、範囲に基づいたコントロールを増加させるジェスチャーを実行することができる。スクリーンリーダーはアクセシビリティツリーの中のスライダー要素にブラウザーに増加 *アクション* を送信する。
 
-Currently, browsers implement partial support for accessible actions 
-either by implementing built-in support for native HTML elements 
-(for example, a native HTML `<input type="range">` 
-already supports increment and decrement actions,
-and text boxes already support actions to set the value or insert text).
+現在、ブラウザーはネイティブHTML要素の組み込みサポートを実装することによって、アクセシブルアクションを一部実装している。（例えばネイティブHTMLの `<input type="range">` はすでに増加・減少アクションをサポートし、テキストボックスは値を設定したりテキストを挿入するアクションをサポートしている。）
 
-However, there is no way for web authors to listen to accessible actions on
-custom elements.  
-For example, the 
-[custom slider above with a role of `slider`](#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components)
-prompts a suggestion on VoiceOver for iOS 
-to perform swipe gestures to increment or decrement, 
-but there is no way to handle that semantic event via any web API.
+しかしウェブページの著者がカスタムエレメント上のアクセシブルアクションをリッスンする方法が無い。
+例えば、`slider` [ロールを持ったカスタムスライダー]((#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components) 上ではiOSのVoiceOverでは増加・現象のためにスワイプアクションを促す提案がされるが、いかなるウェブAPIもそのセマンティックイベントを扱うことができない。
 
-Developers will be able to listen for keyboard events
-or input events to capture that semantic event.
+開発者はセマンティックイベントを補足するようなキーボードイベントまたは入力イベントをリッスンすることができるようになるだろう。
 
-For example, to implement a custom slider,
-the author could handle the `Up` and `Down` key events
-as recommended in the [ARIA Authoring Practices guide](https://www.w3.org/TR/wai-aria-practices-1.1/#slider_kbd_interaction),
-and this would handle the assistive technology event as well.
+例えば、著者はカスタムスライダーを実装するために [ARIA Authoring Practices guide](https://www.w3.org/TR/wai-aria-practices-1.1/#slider_kbd_interaction)で推奨されている `Up` と `Down` キーイベントを扱うことができ、同じように支援技術のイベントも上手く扱うことがｄけいる。
 
 ```js
 customSlider.addEventListener('keydown', (event) => {
@@ -375,47 +344,42 @@ customSlider.addEventListener('keydown', (event) => {
 });
 ```
 
-### Virtual Accessibility Nodes
+### 仮想アクセシビリティノード
 
-**Virtual Accessibility Nodes** will allow authors
-to expose "virtual" accessibility nodes,
-which are not associated directly with any particular DOM element,
-to assistive technology.
+**仮想アクセシビリティノード** は著者が支援技術に特定のDOM要素に直接関係のない *仮想* のアクセシビリティノードに触れさせられることができるだろう。
 
-This mechanism is often present in native accessibility APIs,
-in order to allow authors more granular control over the accessibility
-of custom-drawn APIs.
+このメカニズムは、著者がカスタム描画APIのアクセシビリティをよりきめ細かくコントロールするためにネイティブアクセシビリティAPIによく存在する。
 
 ```IDL
-// An AccessibleNode represents a virtual accessible node.
+// AccessibuleNode は仮想のアクセシビリティノードを表している。
 interface AccessibleNode {
     attribute DOMString? role;
     attribute DOMString? name;
     
     attribute DOMString? autocomplete;
-    // ... all other ARIA-equivalent attributes
+    // ... その他すべてのARIAと同等の属性
 
-    // Non-ARIA equivalent attributes necessary for virtual nodes only
+    // 仮想ノードのためだけの重要なARIAと同等でない属性
     attribute DOMString? offsetLeft;
     attribute DOMString? offsetTop;
     attribute DOMString? offsetWidth;
     attribute DOMString? offsetHeight;
     attribute AccessibleNode? offsetParent;
 
-    // Only affects accessible focus
+    // アクセシブルフォーカスだけの影響
     boolean focusable;
 
-    // Tree walking
+    // ツリーをたどる
     readonly attribute AccessibleNode? parent;
     readonly attribute ComputedAccessibleNode? firstChild;
     readonly attribute ComputedAccessibleNode? lastChild;
     readonly attribute ComputedAccessibleNode? previousSibling;
     readonly attribute ComputedAccessibleNode? nextSibling;
 
-    // Actions
+    // アクション
     void focus();
 
-    // Tree modification
+    // ツリーの変更
     AccessibleNode insertBefore(AccessibleNode node, Node? child);
     AccessibleNode appendChild(AccessibleNode node);
     AccessibleNode replaceChild(AccessibleNode node, AccessibleNode child);
@@ -430,19 +394,18 @@ partial interface Element {
 }
 ```
 
-- Calling `attachAccessibleRoot()` causes an `AccessibleNode` to be associated with a `Node`.
-  - The returned `AccessibleNode` forms the root of a virtual accessibility tree.
-  - The Node's DOM children are implicitly ignored for accessibility once an `AccessibleRoot` is attached - there is no mixing of DOM children and virtual accessible nodes.
-- Like `ShadowRoot`, an element may only have one associated `AccessibleRoot`.
-- Only `AccessibleNode`s may have `AccessibleNodes` as children, 
-  and `AccessibleNode`s may only have `AccessibleNode`s as children.
+- `attachAccessibleRoot()` を実行することで `AccessibleNode` が `Node` に関連付けられる。
+  - リターンされた `AccessibleNode` は仮想アクセシビリティツリーのルートを形成する。
+  - そのノードのDOM子要素は、`AccessibleRoot` が付与されると、暗黙のうちに無視され、DOMの子要素と仮想アクセシブルノードが混在することはない。
+- `ShadowRoot` のように、一つの要素は一つの関連付けられた `AccessibleRoot` しか持たない。
+- `AccessibleNode` だけが子に `AccessibleNodes` 持ち、 `AccessibleNode` は `AccessibleNode` のみ子として持つ。
 
-#### Use case 4: Adding non-DOM nodes (“virtual nodes”) to the Accessibility tree 
+#### ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する
 
-For example, to express a complex UI built out of a `<canvas>` element:
+例えば、`<canvas>` 要素から構築された複雑なUIを表すには:
 
 ```js
-// Implementing a canvas-based spreadsheet's semantics
+// canvas ベースのスプレッドシートのセマンティクスを実現する
 canvas.attachAccessibleRoot();
 let table = canvas.accessibleRoot.appendChild(new AccessibleNode());
 table.role = 'table';
@@ -451,10 +414,10 @@ table.rowcount = 100;
 let headerRow = table.appendChild(new AccessibleNode());
 headerRow.role = 'row';
 headerRow.rowindex = 0;
-// etc. etc.
+// などなど
 ```
 
-Virtual nodes will typically need to have location and dimensions set explicitly:
+仮想ノードは通常位置と寸法を明示的に設定する必要がある。
 
 ```js
 cell.offsetLeft = "30px";
@@ -464,34 +427,27 @@ cell.offsetHeight = "300px";
 cell.offsetParent = table;
 ```
 
-If offsetParent is left unset, 
-the coordinates are interpreted relative to the accessible node's parent.
+もし offsetParent を設定しない場合、アクセシブルノードの親を基準として解釈される。
 
-To make a node focusable, the `focusable` attribute can be set. 
-This is similar to setting tabIndex=-1 on a DOM element.
+ノードをフォー傘ブルにする場合、 `focusable` 属性を設定することができる。これは tabIndex=-1 をDOM要素に設定するのに似ている。
 
 ```js
 virtualNode.focusable = true;
 ```
 
-Virtual accessible nodes are not focusable by default.
+仮想アクセシブルノードはデフォルトではフォーカスできない。
 
-Finally, to focus an accessible node, call its focus() method.
+最後に、アクセシビリティノードにフォーカスするには、 focus() メソッドを実行する。
 
 ```js
 virtualNode.focus();
 ```
 
-When a virtual accessible node is focused, 
-input focus in the DOM is unchanged. 
-The focused accessible node is reported to assistive technology
-and other accessibility API clients, 
-but no DOM events are fired and document.activeElement is unchanged.
+仮想アクセシブルノードがフォーカスされたとき、DOMのフォーカスは変わらない。アクセシビリティノードのフォーカスは、支援技術や他のアクセシビリティAPIクライアントに伝わるが、DOMイベントは発火せず document.activeElementも変わらない。
 
-When the focused DOM element changes, accessible focus follows it:
-the DOM element's associated accessible node gets focused.
+DOM要素のフォーカスが変わった時、アクセシブルフォーカスも追従し、DOM要素に関連付けられたアクセシブルノードがフォーカスされる。
 
-### Full Introspection of an Accessibility Tree - `ComputedAccessibleNode`
+### `ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認
 
 ```idl
 partial interface Window {
@@ -501,14 +457,14 @@ partial interface Window {
 
 ```idl
 interface ComputedAccessibleNode {
-    // Same set of attributes as AccessibleNode, but read-only
+    // アクセシビリティノードと同じだが、読み取り専用
     readonly attribute DOMString? role;
     readonly attribute DOMString? name;
     
     readonly attribute DOMString? autocomplete;
-    // ... all other ARIA-equivalent attributes
+    // ... その他すべてのARIAと同等の属性
 
-    // Non-ARIA equivalent attributes
+    // ARIAと同等でない属性
     readonly attribute DOMString? offsetLeft;
     readonly attribute DOMString? offsetTop;
     readonly attribute DOMString? offsetWidth;
@@ -525,57 +481,34 @@ interface ComputedAccessibleNode {
 
 ```
 
-#### Use case 5:  Introspecting the computed tree
+#### ユースケース5: 計算されたツリーを確認する
 
-The **Computed Accessibility Tree** API will allow authors to access
-the full computed accessibility tree -
-all computed properties for the accessibility node associated with each DOM element,
-plus the ability to walk the computed tree structure including virtual nodes.
+*計算されたアクセシビリティツリー* APIは著者に、完全な計算されたアクセシビリティツリーにアクセスすることを許可する。
+それぞれのDOM要素に関連付けられたアクセシビリティノードのすべての計算されたプロパティに加え、仮想ノードを含む計算された木構造を走査可能にする。
 
-This will make it possible to:
-  * write any programmatic test which asserts anything
-    about the semantic properties of an element or a page.
-  * build a reliable browser-based assistive technology -
-    for example, a browser extension which uses the accessibility tree
-    to implement a screen reader, screen magnifier, or other assistive functionality;
-    or an in-page tool.
-  * detect whether an accessibility property
-    has been successfully applied
-    (via ARIA or otherwise)
-    to an element -
-    for example, to detect whether a browser has implemented a particular version of ARIA.
-  * do any kind of console-based debugging/checking of accessibility tree issues.
-  * react to accessibility tree state,
-    for example, detecting the exposed role of an element
-    and modifying the accessible help text to suit.
+このことは次のことを可能にする:
+* ページ、またはようそのセマンティックプロパティが確からしいか確認するプログラムによるテストを書くこと
+* ブラウザーベースの信頼できる支援技術の構築。例えば、アクセシビリティツリーを利用したスクリーンリーダー、スクリーンルーペ、または他の支援機能を持ったブラウザー拡張やページ内ツール。
+* アクセシブルプロパティが（ARIAなどを通じて）要素に正しく適用されたかを検査する。例えば、ブラウザが特定のバージョンのARIAに対応しているかを検査できる。
+* アクセシビリティツリーの問題をコンソールベースでデバッグしたりチェックしたりする。
+* アクセシビリティツリーの状態に反応する。例えば要素に表されたロールを検査したり、アクセシブルなヘルプテキストを変更したりなど。
 
-#### Why is accessing the computed properties being addressed last?
+#### なぜ最終的に計算されたプロパティにアクセスするのか
 
-**Consistency**
-Currently, the accessibility tree is not standardized between browsers:
-Each implements accessibility tree computation slightly differently.
-In order for this API to be useful,
-it needs to work consistently across browsers,
-so that developers don't need to write special case code for each.
+**一貫性**
+現在、アクセシビリティツリーはブラウザ間で標準化されていない。それぞれのアクセシビリティツリーの計算は実装がわずかに異なります。
 
-We want to take the appropriate time to ensure we can agree
-on the details for how the tree should be computed
-and represented.
+このAPIが役に立つには、ブラウザ間で一貫して動作することが必要で、開発者はそれぞれに特別なコードを書く必要がない。
 
-**Performance**
-Computing the value of many accessible properties requires layout.
-Allowing web authors to query the computed value of an accessible property
-synchronously via a simple property access
-would introduce confusing performance bottlenecks.
+我々はツリーがどのように計算され表現されるかについて合意ができるよう十分な時間をかけていきたいと考えている。
 
-We will likely want to create an asynchronous mechanism for this reason,
-meaning that it will not be part of the `accessibleNode` interface.
+**パフォーマンス**
+多くのアクセシビリティプロパティを計算するにはレイアウトが必要となる。ウェブ制作者に単純なプロパティアクセスと同期してアクセシビリティプロパティの計算された値を調べることを許可すると、パフォーマンスのボトルネックに混乱をもたらしてしまう。
 
-**User experience**
-Compared to the previous three phases,
-accessing the computed accessibility tree will have the least direct impact on users.
-In the spirit of the [Priority of Constituencies](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies),
-it makes sense to tackle this work last.
+このことから `accessibleNode` インターフェースの一部を意味しない非同期的なメカニズムを作成したいと考えている。
+
+**ユーザー体験**
+前の3つと比較して計算されたアクセシビリティツリーにアクセスすることはユーザーに与える影響が最小限となる。[優先順位の構成要素](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies)の考え方の元、このことに最後に取り組むことは理にかなっている。
 
 ### Audience for the proposed API
 
