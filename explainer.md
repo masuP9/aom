@@ -26,9 +26,9 @@
       - [ユースケース 3: 支援技術からのイベントをリッスンする](#use-case-3-listening-for-events-from-assistive-technology)
     - [仮想アクセシビリティノード](#virtual-accessibility-nodes)
       - [ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する](#use-case-4-adding-non-dom-nodes-virtual-nodes-to-the-accessibility-tree)
-    - [Full Introspection of an Accessibility Tree - `ComputedAccessibleNode`](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
-      - [Use case 5:  Introspecting the computed tree](#use-case-5--introspecting-the-computed-tree)
-      - [Why is accessing the computed properties being addressed last?](#why-is-accessing-the-computed-properties-being-addressed-last)
+    - [`ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
+      - [ユースケース5: 計算されたツリーを確認する](#use-case-5--introspecting-the-computed-tree)
+      - [なぜ最終的に計算されたプロパティにアクセスするのか](#why-is-accessing-the-computed-properties-being-addressed-last)
     - [Audience for the proposed API](#audience-for-the-proposed-api)
     - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
   - [Next Steps](#next-steps)
@@ -447,7 +447,7 @@ virtualNode.focus();
 
 DOM要素のフォーカスが変わった時、アクセシブルフォーカスも追従し、DOM要素に関連付けられたアクセシブルノードがフォーカスされる。
 
-### Full Introspection of an Accessibility Tree - `ComputedAccessibleNode`
+### `ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認
 
 ```idl
 partial interface Window {
@@ -457,14 +457,14 @@ partial interface Window {
 
 ```idl
 interface ComputedAccessibleNode {
-    // Same set of attributes as AccessibleNode, but read-only
+    // アクセシビリティノードと同じだが、読み取り専用
     readonly attribute DOMString? role;
     readonly attribute DOMString? name;
     
     readonly attribute DOMString? autocomplete;
-    // ... all other ARIA-equivalent attributes
+    // ... その他すべてのARIAと同等の属性
 
-    // Non-ARIA equivalent attributes
+    // ARIAと同等でない属性
     readonly attribute DOMString? offsetLeft;
     readonly attribute DOMString? offsetTop;
     readonly attribute DOMString? offsetWidth;
@@ -481,57 +481,34 @@ interface ComputedAccessibleNode {
 
 ```
 
-#### Use case 5:  Introspecting the computed tree
+#### ユースケース5: 計算されたツリーを確認する
 
-The **Computed Accessibility Tree** API will allow authors to access
-the full computed accessibility tree -
-all computed properties for the accessibility node associated with each DOM element,
-plus the ability to walk the computed tree structure including virtual nodes.
+*計算されたアクセシビリティツリー* APIは著者に、完全な計算されたアクセシビリティツリーにアクセスすることを許可する。
+それぞれのDOM要素に関連付けられたアクセシビリティノードのすべての計算されたプロパティに加え、仮想ノードを含む計算された木構造を走査可能にする。
 
-This will make it possible to:
-  * write any programmatic test which asserts anything
-    about the semantic properties of an element or a page.
-  * build a reliable browser-based assistive technology -
-    for example, a browser extension which uses the accessibility tree
-    to implement a screen reader, screen magnifier, or other assistive functionality;
-    or an in-page tool.
-  * detect whether an accessibility property
-    has been successfully applied
-    (via ARIA or otherwise)
-    to an element -
-    for example, to detect whether a browser has implemented a particular version of ARIA.
-  * do any kind of console-based debugging/checking of accessibility tree issues.
-  * react to accessibility tree state,
-    for example, detecting the exposed role of an element
-    and modifying the accessible help text to suit.
+このことは次のことを可能にする:
+* ページ、またはようそのセマンティックプロパティが確からしいか確認するプログラムによるテストを書くこと
+* ブラウザーベースの信頼できる支援技術の構築。例えば、アクセシビリティツリーを利用したスクリーンリーダー、スクリーンルーペ、または他の支援機能を持ったブラウザー拡張やページ内ツール。
+* アクセシブルプロパティが（ARIAなどを通じて）要素に正しく適用されたかを検査する。例えば、ブラウザが特定のバージョンのARIAに対応しているかを検査できる。
+* アクセシビリティツリーの問題をコンソールベースでデバッグしたりチェックしたりする。
+* アクセシビリティツリーの状態に反応する。例えば要素に表されたロールを検査したり、アクセシブルなヘルプテキストを変更したりなど。
 
-#### Why is accessing the computed properties being addressed last?
+#### なぜ最終的に計算されたプロパティにアクセスするのか
 
-**Consistency**
-Currently, the accessibility tree is not standardized between browsers:
-Each implements accessibility tree computation slightly differently.
-In order for this API to be useful,
-it needs to work consistently across browsers,
-so that developers don't need to write special case code for each.
+**一貫性**
+現在、アクセシビリティツリーはブラウザ間で標準化されていない。それぞれのアクセシビリティツリーの計算は実装がわずかに異なります。
 
-We want to take the appropriate time to ensure we can agree
-on the details for how the tree should be computed
-and represented.
+このAPIが役に立つには、ブラウザ間で一貫して動作することが必要で、開発者はそれぞれに特別なコードを書く必要がない。
 
-**Performance**
-Computing the value of many accessible properties requires layout.
-Allowing web authors to query the computed value of an accessible property
-synchronously via a simple property access
-would introduce confusing performance bottlenecks.
+我々はツリーがどのように計算され表現されるかについて合意ができるよう十分な時間をかけていきたいと考えている。
 
-We will likely want to create an asynchronous mechanism for this reason,
-meaning that it will not be part of the `accessibleNode` interface.
+**パフォーマンス**
+多くのアクセシビリティプロパティを計算するにはレイアウトが必要となる。ウェブ制作者に単純なプロパティアクセスと同期してアクセシビリティプロパティの計算された値を調べることを許可すると、パフォーマンスのボトルネックに混乱をもたらしてしまう。
 
-**User experience**
-Compared to the previous three phases,
-accessing the computed accessibility tree will have the least direct impact on users.
-In the spirit of the [Priority of Constituencies](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies),
-it makes sense to tackle this work last.
+このことから `accessibleNode` インターフェースの一部を意味しない非同期的なメカニズムを作成したいと考えている。
+
+**ユーザー体験**
+前の3つと比較して計算されたアクセシビリティツリーにアクセスすることはユーザーに与える影響が最小限となる。[優先順位の構成要素](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies)の考え方の元、このことに最後に取り組むことは理にかなっている。
 
 ### Audience for the proposed API
 
