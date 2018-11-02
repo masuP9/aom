@@ -21,9 +21,9 @@
       - [ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する](#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components)
         - [customElements.define() を利用したデフォルトセマンティクス](#default-semantics-via-customelementsdefine)
         - [`ElementInternals` オブジェクトを利用した動的なインスタンス単位のセマンティクス](#per-instance-dynamic-semantics-via-the-createdcallback-reaction)
-    - [User action events from Assistive Technology](#user-action-events-from-assistive-technology)
-      - [New InputEvent types](#new-inputevent-types)
-      - [Use case 3: Listening for events from Assistive Technology](#use-case-3-listening-for-events-from-assistive-technology)
+    - [支援技術からのユーザーアクションイベント](#user-action-events-from-assistive-technology)
+      - [新しい入力イベントタイプ](#new-inputevent-types)
+      - [ユースケース 3: 支援技術からのイベントをリッスンする](#use-case-3-listening-for-events-from-assistive-technology)
     - [Virtual Accessibility Nodes](#virtual-accessibility-nodes)
       - [Use case 4: Adding non-DOM nodes (“virtual nodes”) to the Accessibility tree](#use-case-4-adding-non-dom-nodes-virtual-nodes-to-the-accessibility-tree)
     - [Full Introspection of an Accessibility Tree - `ComputedAccessibleNode`](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
@@ -281,27 +281,26 @@ customElements.define("custom-tab", CustomTab, { role: "tab", needsElementIntern
 
 仮に著者によって提供されたセマンティクスが Custom Element のセマンティクスと競合する場合でも著者が提供するセマンティクスが優先される。
 
-### User action events from Assistive Technology
+### 支援技術からのユーザーアクションイベント
 
-To preserve the privacy of assistive technology users,
-events from assistive technology will typically cause a synthesised DOM event to be triggered:
+支援技術ユーザーのプライバシーを保護するために、通常、支援技術からのイベントは合成されたDOMイベントを発生させる。
 
-| **AT event**     | **Targets**                                                                        | **DOM event**                                                                   |
-|------------------|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
-| `click`          | *all elements*                                                                     | `click`                                                                         |
-| `focus`          | *all elements*                                                                     | `focus`                                                                         |
-| `select`         | Elements whose mapped role is `cell` or `option`                                   | `click`                                                                         |
-| `scrollIntoView` | (n/a)                                                                              | No event                                                                        |
-| `dismiss`        | *all elements*                                                                     | Keypress sequence for `Escape` key                                              |
-| `contextMenu`    | *all elements*                                                                     | `contextmenu`                                                                   |
-| `scrollByPage`   | *all elements*                                                                     | Keypress sequence for `PageUp` or `PageDown` key, depending on scroll direction |
-| `increment`      | Elements whose mapped role is `progressbar`, `scrollbar`, `slider` or `spinbutton` | Keypress sequence for `Up` key                                                  |
-| `decrement`      | Elements whose mapped role is `progressbar`, `scrollbar`, `slider` or `spinbutton` | Keypress sequence for `Down` key                                                |
-| `setValue`       | Elements whose mapped role is `combobox`,`scrollbar`,`slider` or `textbox`         | TBD                                                                             |
+| **支援技術のイベント** | **ターゲット** | **DOMイベント** |
+|---------------------|--------------|----------------|
+| `click`             | *すべての要素* | `click` |
+| `focus`             | *すべての要素* | `focus` |
+| `select`            | `cell` または `option` ロールがマッピングされた要素 | `click` |
+| `scrollIntoView`    | (n/a) | イベントなし |
+| `dismiss`           | *すべての要素* | `Escape` キーのキーが押されたシーケンス |
+| `contextMenu`       | *すべての要素* | `contextmenu` |
+| `scrollByPage`      | *すべての要素* | スクロール方向に応じた `PageUp` または `PageDown` キーが押されたシーケンス |
+| `increment`         | `progressbar`、 `scrollbar`、 `slider` または `spinbutton` ロールがマッピングされた要素 | `Up` キーのキーが押されたシーケンス |
+| `decrement`         | `progressbar`、 `scrollbar`、 `slider` または `spinbutton` ロールがマッピングされた要素 | `Down` キーが押されたシーケンス |
+| `setValue`          | `combobox`、 `scrollbar`、 `slider` または `textbox` キーが押されたシーケンス | 未定  |
 
-#### New InputEvent types
+#### 新しい入力イベントタイプ
 
-We will also add some new [`InputEvent`](https://www.w3.org/TR/uievents/#inputevent) types:
+いくつかの[`Input Event`](https://www.w3.org/TR/uievents/#inputevent) タイプを追加する:
 
 * `increment`
 * `decrement`
@@ -309,59 +308,29 @@ We will also add some new [`InputEvent`](https://www.w3.org/TR/uievents/#inputev
 * `scrollPageUp`
 * `scrollPageDown`
 
-These will be triggered via assistive technology events,
-along with the synthesised keyboard events listed in the above table,
-and also synthesised when the keyboard events listed above
-occur in the context of a valid target for the corresponding assistive technology event.
+これらのイベントは上記の表に記載された合成キーボードイベントと共に支援技術のイベントから引き起こされ、
+また上記の関連する支援技術のイベントに対応した有効なターゲットの文脈の中で発生したときに合成される。
 
-For example,
-if a user not using assistive technology presses the `Escape` key in any context,
-an `input` event with a type of `dismiss` will be fired at the focused element
-along with the keypress sequence.
+例えば、もしある文脈で支援技術を使用していないユーザーが `Escape` キーを押した場合、キーが押されたシーケンスで `dismiss` タイプを伴った `input` イベントが発火する
 
-If the same user pressed `Up` while page focus was on
-a `<input type="range">` *or* an element with a role of `slider`
-(either of which will have a computed role of `slider`),
-an `input` event with a type of `increment` will be fired at the focused element
-along with the keypress sequence.
+もし同じユーザーが `<input type="range">` *または* （計算された `slider` ロールを含む）`slider` ロールを持った要素上にフォーカスがある `Up` キーを押した場合、キーが押されたシーケンスで `increment` タイプを伴った `input` イベントがフォーカスされた要素で発火される。
 
-#### Use case 3: Listening for events from Assistive Technology
+#### ユースケース 3: 支援技術からのイベントをリッスンする
 
-For example:
+例えば:
 
-* A user may be using voice control software and they may speak the name of a
-  button somewhere in a web page.
-  The voice control software finds the button matching that name in the
-  accessibility tree and sends an *action* to the browser to click on that button.
-* That same user may then issue a voice command to scroll down by one page.
-  The voice control software finds the root element for the web page and sends
-  it the scroll *action*.
-* A mobile screen reader user may navigate to a slider, then perform a gesture to
-  increment a range-based control.
-  The screen reader sends the browser an increment *action* on the slider element
-  in the accessibility tree.
+* ユーザーは音声制御ソフトウェアを利用しており、ウェブページの中のどこかのボタンの名前を読み上げられる。音声制御ソフトウェアはアクセシビリティツリーの中に該当する名前があるボタンを見つけ、クリックすることで *アクション* を送信することができる。
+* 同じユーザーはあるページをスクロールダウンする音声コマンドを発行する。その音声制御ソフトウェアはウェブページのルート要素を見つけ、スクロール *アクション* を送信する。
+* モバイルスクリーンリーダーユーザーは、スライダーに移動し、範囲に基づいたコントロールを増加させるジェスチャーを実行することができる。スクリーンリーダーはアクセシビリティツリーの中のスライダー要素にブラウザーに増加 *アクション* を送信する。
 
-Currently, browsers implement partial support for accessible actions 
-either by implementing built-in support for native HTML elements 
-(for example, a native HTML `<input type="range">` 
-already supports increment and decrement actions,
-and text boxes already support actions to set the value or insert text).
+現在、ブラウザーはネイティブHTML要素の組み込みサポートを実装することによって、アクセシブルアクションを一部実装している。（例えばネイティブHTMLの `<input type="range">` はすでに増加・減少アクションをサポートし、テキストボックスは値を設定したりテキストを挿入するアクションをサポートしている。）
 
-However, there is no way for web authors to listen to accessible actions on
-custom elements.  
-For example, the 
-[custom slider above with a role of `slider`](#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components)
-prompts a suggestion on VoiceOver for iOS 
-to perform swipe gestures to increment or decrement, 
-but there is no way to handle that semantic event via any web API.
+しかしウェブページの著者がカスタムエレメント上のアクセシブルアクションをリッスンする方法が無い。
+例えば、`slider` [ロールを持ったカスタムスライダー]((#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components) 上ではiOSのVoiceOverでは増加・現象のためにスワイプアクションを促す提案がされるが、いかなるウェブAPIもそのセマンティックイベントを扱うことができない。
 
-Developers will be able to listen for keyboard events
-or input events to capture that semantic event.
+開発者はセマンティックイベントを補足するようなキーボードイベントまたは入力イベントをリッスンすることができるようになるだろう。
 
-For example, to implement a custom slider,
-the author could handle the `Up` and `Down` key events
-as recommended in the [ARIA Authoring Practices guide](https://www.w3.org/TR/wai-aria-practices-1.1/#slider_kbd_interaction),
-and this would handle the assistive technology event as well.
+例えば、著者はカスタムスライダーを実装するために [ARIA Authoring Practices guide](https://www.w3.org/TR/wai-aria-practices-1.1/#slider_kbd_interaction)で推奨されている `Up` と `Down` キーイベントを扱うことができ、同じように支援技術のイベントも上手く扱うことがｄけいる。
 
 ```js
 customSlider.addEventListener('keydown', (event) => {
