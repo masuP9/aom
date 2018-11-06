@@ -311,7 +311,7 @@ customElements.define("custom-tab", CustomTab, { role: "tab", needsElementIntern
 これらのイベントは上記の表に記載された合成キーボードイベントと共に支援技術のイベントから引き起こされ、
 また上記の関連する支援技術のイベントに対応した有効なターゲットの文脈の中で発生したときに合成される。
 
-例えば、もしある文脈で支援技術を使用していないユーザーが `Escape` キーを押した場合、キーが押されたシーケンスで `dismiss` タイプを伴った `input` イベントが発火する
+例えば、もしある文脈で支援技術を使用していないユーザーが `Escape` キーを押した場合、キーが押されたシーケンスで `dismiss` タイプを伴った `input` イベントが発火する。
 
 もし同じユーザーが `<input type="range">` *または* （計算された `slider` ロールを含む）`slider` ロールを持った要素上にフォーカスがある `Up` キーを押した場合、キーが押されたシーケンスで `increment` タイプを伴った `input` イベントがフォーカスされた要素で発火される。
 
@@ -330,7 +330,7 @@ customElements.define("custom-tab", CustomTab, { role: "tab", needsElementIntern
 
 開発者はセマンティックイベントを補足するようなキーボードイベントまたは入力イベントをリッスンすることができるようになるだろう。
 
-例えば、著者はカスタムスライダーを実装するために [ARIA Authoring Practices guide](https://www.w3.org/TR/wai-aria-practices-1.1/#slider_kbd_interaction)で推奨されている `Up` と `Down` キーイベントを扱うことができ、同じように支援技術のイベントも上手く扱うことがｄけいる。
+例えば、著者はカスタムスライダーを実装するために [ARIA Authoring Practices guide](https://www.w3.org/TR/wai-aria-practices-1.1/#slider_kbd_interaction)で推奨されている `Up` と `Down` キーイベントを扱うことができ、同じように支援技術のイベントも扱うことができる。
 
 ```js
 customSlider.addEventListener('keydown', (event) => {
@@ -355,7 +355,7 @@ customSlider.addEventListener('keydown', (event) => {
 interface AccessibleNode {
     attribute DOMString? role;
     attribute DOMString? name;
-    
+
     attribute DOMString? autocomplete;
     // ... その他すべてのARIAと同等の属性
 
@@ -429,7 +429,7 @@ cell.offsetParent = table;
 
 もし offsetParent を設定しない場合、アクセシブルノードの親を基準として解釈される。
 
-ノードをフォー傘ブルにする場合、 `focusable` 属性を設定することができる。これは tabIndex=-1 をDOM要素に設定するのに似ている。
+ノードをフォーカサブルにする場合、 `focusable` 属性を設定することができる。これは tabIndex=-1 をDOM要素に設定するのに似ている。
 
 ```js
 virtualNode.focusable = true;
@@ -460,7 +460,7 @@ interface ComputedAccessibleNode {
     // アクセシビリティノードと同じだが、読み取り専用
     readonly attribute DOMString? role;
     readonly attribute DOMString? name;
-    
+
     readonly attribute DOMString? autocomplete;
     // ... その他すべてのARIAと同等の属性
 
@@ -487,7 +487,7 @@ interface ComputedAccessibleNode {
 それぞれのDOM要素に関連付けられたアクセシビリティノードのすべての計算されたプロパティに加え、仮想ノードを含む計算された木構造を走査可能にする。
 
 このことは次のことを可能にする:
-* ページ、またはようそのセマンティックプロパティが確からしいか確認するプログラムによるテストを書くこと
+* ページ、または要素のセマンティックプロパティが確からしいか確認するプログラムによるテストを書くこと
 * ブラウザーベースの信頼できる支援技術の構築。例えば、アクセシビリティツリーを利用したスクリーンリーダー、スクリーンルーペ、または他の支援機能を持ったブラウザー拡張やページ内ツール。
 * アクセシブルプロパティが（ARIAなどを通じて）要素に正しく適用されたかを検査する。例えば、ブラウザが特定のバージョンのARIAに対応しているかを検査できる。
 * アクセシビリティツリーの問題をコンソールベースでデバッグしたりチェックしたりする。
