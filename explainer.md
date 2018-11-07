@@ -526,28 +526,18 @@ interface ComputedAccessibleNode {
 
 ### `AccessibleNode`に何が起こったのか?
 
-Initially, our intention was to combine these use cases into a read/write API
-analogous to the DOM,
-wherein each DOM `Element` would have an associated `AccessibleNode`
-allowing authors to read and write accessible properties.
-This was named the Accessibility Object Model,
-analogous to the Document Object Model.
+当初の意図としては、これまでのユースケースを読み書き可能なAPIにまとめるものだった。それはそれぞれのDOMの `Element` に、アクセシビリティプロパティを読み込んだり書き込んだりできる `AccessibleNode` が関連付けられているという点でDOMに似ていた。
 
-However, as discussions progressed it became clear that there were some issues with this model:
-- Computing the accessibility tree should not be necessary in order to modify it -
-getting an `AccessibleNode` to write to 
-should thus not depend on getting the computed properties.
-- Exposing the computed accessibility tree requires standardisation across browsers
-of how the tree is computed.
-- If we are not exposing computed properties on an `Element`'s `AccessibleNode`,
-it's unclear what the purpose of this object is beyond a "bag of properties".
-- Determining the order of precedence of ARIA properties
-and `AccessibleNode` properties did not have an obvious "correct" answer.
-- Similarly, using exclusively `AccessibleNode`s to express relationships was confusing.
+これはドキュメントオブジェクトモデルと似たようなアクセシビリティオブジェクトモデルと命名された。
 
-These issues prompted a reassessment, 
-and a simplification of the API based around the original set of use cases
-we were committed to addressing.
+しかし、議論が進むにつれこのモデルにはいくつかの問題があることがわかってきた。
+- アクセシビリティツリーを計算することは、それを変更するために必要にはならない。書き込むための `AccessibleNode` を取得することは、計算済のプロパティを取得することに依存してはならない
+- 計算されたアクセシビリティツリーを表示するにはブラウザ間で計算方法の標準化が必要となる
+- もし `Element` の `AccessibleNode` の計算済のプロパティを表示しない場合、このオブジェクトの「プロパティの入れ物」を超えるという目的がぼやける
+- ARAIプロパティと `AccessibleNode` プロパティの優先度の決定について、明確で「正しい」答えがなかった
+- 同様に、`AccessibleNode` を排他的に使用して関係性を表現することは分かりにくかった
+
+これらの問題により、APIをもともと対処するつもりだったユースケースに基づいて再評価、そして簡素化することとなった。
 
 ## Next Steps
 
