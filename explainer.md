@@ -31,7 +31,7 @@
       - [なぜ最終的に計算されたプロパティにアクセスするのか](#why-is-accessing-the-computed-properties-being-addressed-last)
     - [このAPIの対象者](#audience-for-the-proposed-api)
     - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
-  - [Next Steps](#next-steps)
+  - [次のステップ](#next-steps)
     - [Incubation](#incubation)
   - [Additional thanks](#additional-thanks)
 - [付録](#appendices)
@@ -539,12 +539,11 @@ interface ComputedAccessibleNode {
 
 これらの問題により、APIをもともと対処するつもりだったユースケースに基づいて再評価、そして簡素化することとなった。
 
-## Next Steps
+## 次のステップ
 
-The Accessibility Object Model development is led by a team of editors
-that represent several major browser vendors.
+アクセシビリティオブジェクトモデルの開発は、現在の主要なブラウザベンダーを代表した編集者のチームがリードしている。
 
-Issues can be filed on GitHub:
+GitHub上で問題を報告することができる。
 
 https://github.com/WICG/aom/issues
 
