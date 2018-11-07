@@ -29,7 +29,7 @@
     - [`ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
       - [ユースケース5: 計算されたツリーを確認する](#use-case-5--introspecting-the-computed-tree)
       - [なぜ最終的に計算されたプロパティにアクセスするのか](#why-is-accessing-the-computed-properties-being-addressed-last)
-    - [Audience for the proposed API](#audience-for-the-proposed-api)
+    - [このAPIの対象者](#audience-for-the-proposed-api)
     - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
   - [Next Steps](#next-steps)
     - [Incubation](#incubation)
@@ -510,24 +510,19 @@ interface ComputedAccessibleNode {
 **ユーザー体験**
 前の3つと比較して計算されたアクセシビリティツリーにアクセスすることはユーザーに与える影響が最小限となる。[優先順位の構成要素](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies)の考え方の元、このことに最後に取り組むことは理にかなっている。
 
-### Audience for the proposed API
+### このAPIの対象者
 
-This API is will be primarily of interest to
-the relatively small number of developers who create and maintain
-the JavaScript frameworks and widget libraries that power the vast majority of web apps.
-Accessibility is a key goal of most of these frameworks and libraries,
-as they need to be usable in as broad a variety of contexts as possible.
-A low-level API would allow them to work around bugs and limitations
-and provide a clean high-level interface that "just works" 
-for the developers who use their components.
+このAPIは主に、ウェブアプリの多くを動かしているJavaScriptフレームワークやウィジェットライブラリーを制作、メンテナンスしている比較的少数の開発者に興味を持たれるだろう。
 
-This API is also aimed at developers of large flagship web apps that
-push the boundaries of the web platform. 
-These apps tend to have large development teams 
-who look for unique opportunities to improve performance 
-using low-level APIs like Canvas. 
-These development teams have the resources to make accessibility a priority too, 
-but existing APIs make it very cumbersome.
+それらのフレームワークやライブラリーにとってアクセシビリティは、可能な限り幅広く多様な文脈で使用されるようになるため、重要な目標の一つである。
+
+低レベルのAPIよって彼らは制約やバグを回避し、彼らの制作したコンポーネントを使用する開発者のためにクリーンな高レベルのインターフェースを提供できるようになる。
+
+このAPIはウェブプラットフォームの境界を押し広げるような巨大なフラッグシップウェブアプリの開発者をも対象としている。
+
+これらのアプリの開発チームでは、Canvasのような低レベルAPIを利用してでもパフォーマンスを向上させたがっていることがしばしばある。
+
+そのような開発チームだと、アクセシビリティを優先するだけのリソースもあるが、既存のAPIでは非常に面倒である。
 
 ### `AccessibleNode`に何が起こったのか?
 
