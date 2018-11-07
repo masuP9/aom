@@ -29,9 +29,9 @@
     - [`ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
       - [ユースケース5: 計算されたツリーを確認する](#use-case-5--introspecting-the-computed-tree)
       - [なぜ最終的に計算されたプロパティにアクセスするのか](#why-is-accessing-the-computed-properties-being-addressed-last)
-    - [Audience for the proposed API](#audience-for-the-proposed-api)
+    - [このAPIの対象者](#audience-for-the-proposed-api)
     - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
-  - [Next Steps](#next-steps)
+  - [次のステップ](#next-steps)
     - [Incubation](#incubation)
   - [Additional thanks](#additional-thanks)
 - [付録](#appendices)
@@ -510,56 +510,40 @@ interface ComputedAccessibleNode {
 **ユーザー体験**
 前の3つと比較して計算されたアクセシビリティツリーにアクセスすることはユーザーに与える影響が最小限となる。[優先順位の構成要素](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies)の考え方の元、このことに最後に取り組むことは理にかなっている。
 
-### Audience for the proposed API
+### このAPIの対象者
 
-This API is will be primarily of interest to
-the relatively small number of developers who create and maintain
-the JavaScript frameworks and widget libraries that power the vast majority of web apps.
-Accessibility is a key goal of most of these frameworks and libraries,
-as they need to be usable in as broad a variety of contexts as possible.
-A low-level API would allow them to work around bugs and limitations
-and provide a clean high-level interface that "just works" 
-for the developers who use their components.
+このAPIは主に、ウェブアプリの多くを動かしているJavaScriptフレームワークやウィジェットライブラリーを制作、メンテナンスしている比較的少数の開発者に興味を持たれるだろう。
 
-This API is also aimed at developers of large flagship web apps that
-push the boundaries of the web platform. 
-These apps tend to have large development teams 
-who look for unique opportunities to improve performance 
-using low-level APIs like Canvas. 
-These development teams have the resources to make accessibility a priority too, 
-but existing APIs make it very cumbersome.
+それらのフレームワークやライブラリーにとってアクセシビリティは、可能な限り幅広く多様な文脈で使用されるようになるため、重要な目標の一つである。
+
+低レベルのAPIよって彼らは制約やバグを回避し、彼らの制作したコンポーネントを使用する開発者のためにクリーンな高レベルのインターフェースを提供できるようになる。
+
+このAPIはウェブプラットフォームの境界を押し広げるような巨大なフラッグシップウェブアプリの開発者をも対象としている。
+
+これらのアプリの開発チームでは、Canvasのような低レベルAPIを利用してでもパフォーマンスを向上させたがっていることがしばしばある。
+
+そのような開発チームだと、アクセシビリティを優先するだけのリソースもあるが、既存のAPIでは非常に面倒である。
 
 ### `AccessibleNode`に何が起こったのか?
 
-Initially, our intention was to combine these use cases into a read/write API
-analogous to the DOM,
-wherein each DOM `Element` would have an associated `AccessibleNode`
-allowing authors to read and write accessible properties.
-This was named the Accessibility Object Model,
-analogous to the Document Object Model.
+当初の意図としては、これまでのユースケースを読み書き可能なAPIにまとめるものだった。それはそれぞれのDOMの `Element` に、アクセシビリティプロパティを読み込んだり書き込んだりできる `AccessibleNode` が関連付けられているという点でDOMに似ていた。
 
-However, as discussions progressed it became clear that there were some issues with this model:
-- Computing the accessibility tree should not be necessary in order to modify it -
-getting an `AccessibleNode` to write to 
-should thus not depend on getting the computed properties.
-- Exposing the computed accessibility tree requires standardisation across browsers
-of how the tree is computed.
-- If we are not exposing computed properties on an `Element`'s `AccessibleNode`,
-it's unclear what the purpose of this object is beyond a "bag of properties".
-- Determining the order of precedence of ARIA properties
-and `AccessibleNode` properties did not have an obvious "correct" answer.
-- Similarly, using exclusively `AccessibleNode`s to express relationships was confusing.
+これはドキュメントオブジェクトモデルと似たようなアクセシビリティオブジェクトモデルと命名された。
 
-These issues prompted a reassessment, 
-and a simplification of the API based around the original set of use cases
-we were committed to addressing.
+しかし、議論が進むにつれこのモデルにはいくつかの問題があることがわかってきた。
+- アクセシビリティツリーを計算することは、それを変更するために必要にはならない。書き込むための `AccessibleNode` を取得することは、計算済のプロパティを取得することに依存してはならない
+- 計算されたアクセシビリティツリーを表示するにはブラウザ間で計算方法の標準化が必要となる
+- もし `Element` の `AccessibleNode` の計算済のプロパティを表示しない場合、このオブジェクトの「プロパティの入れ物」を超えるという目的がぼやける
+- ARAIプロパティと `AccessibleNode` プロパティの優先度の決定について、明確で「正しい」答えがなかった
+- 同様に、`AccessibleNode` を排他的に使用して関係性を表現することは分かりにくかった
 
-## Next Steps
+これらの問題により、APIをもともと対処するつもりだったユースケースに基づいて再評価、そして簡素化することとなった。
 
-The Accessibility Object Model development is led by a team of editors
-that represent several major browser vendors.
+## 次のステップ
 
-Issues can be filed on GitHub:
+アクセシビリティオブジェクトモデルの開発は、現在の主要なブラウザベンダーを代表した編集者のチームがリードしている。
+
+GitHub上で問題を報告することができる。
 
 https://github.com/WICG/aom/issues
 
