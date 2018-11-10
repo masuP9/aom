@@ -35,7 +35,7 @@
     - [インキュベーション](#incubation)
   - [謝辞](#additional-thanks)
 - [付録](#appendices)
-  - [Background: assistive technology and the accessibility tree](#background-assistive-technology-and-the-accessibility-tree)
+  - [背景: 支援技術とアクセシビリティツリー](#background-assistive-technology-and-the-accessibility-tree)
     - [Accessibility node properties](#accessibility-node-properties)
   - [Background: DOM tree, accessibility tree and platform accessibility APIs](#background-dom-tree-accessibility-tree-and-platform-accessibility-apis)
     - [Mapping native HTML to the accessibility tree](#mapping-native-html-to-the-accessibility-tree)
@@ -579,63 +579,25 @@ ARIAがWeb上のアクセシビリティプロパティのための構造的な�
 
 # 付録
 
-## Background: assistive technology and the accessibility tree
+## 背景: 支援技術とアクセシビリティツリー
 
-Assistive technology, in this context, refers to a third party application
-which augments or replaces the existing UI for an application.
-One well-known example is a screen reader,
-which replaces the visual UI and pointer-based UI
-with an auditory output (speech and tones)
-and a keyboard and/or gesture-based input mechanism.
+この仕様の中で支援技術は、アプリケーションの既存のUIを補強したり置き換えたりする第三者のアプリケーションのことを指す。よく知られた例の一つとしてスクリーンリーダーがある。スクリーンリーダーは視覚的でポインターベースのUIを、聴覚出力（音声、およびトーン）と、キーワード、ジェスチャーの両方、またはいずれかによる入力メカニズムに置き換える。
 
-Many assistive technologies interact with a web page via accessibility APIs, such as
-[UIAutomation](https://msdn.microsoft.com/en-us/library/windows/desktop/ee684009.aspx)
-on Windows, or
-[NSAccessibility](https://developer.apple.com/library/mac/documentation/AppKit/Reference/NSAccessibility_Protocol_Reference/)
-on OS X.
-These APIs allow an application to expose a tree of objects representing the application's interface,
-typically with the root node representing the application window,
-with various levels of grouping node descendants down to individual interactive elements.
-This is referred to as the **accessibility tree**.
+多くの支援技術は、アクセシビリティAPIを通じてウェブページとやりとりする。たとえば、Windows上の[UIAutomation](https://msdn.microsoft.com/en-us/library/windows/desktop/ee684009.aspx)や、OS Xの[NSAccessibility](https://developer.apple.com/library/mac/documentation/AppKit/Reference/NSAccessibility_Protocol_Reference/)などがある。これらのAPIを利用するとアプリケーションのインターフェースを示すオブジェクトのツリーを公開することができる。アプリケーションウィンドウのことを示すルートノードから、個々のインタラクティブな要素まで様々なレベルのノードがグループ化されている。これは **アクセシビリティツリー** と呼ばれている。
 
-An assistive technology user interacts with the application almost exclusively via this API,
-as the assistive technology uses it both to create the alternative interface,
-and to route user interaction events triggered by the user's commands to the assistive technology.
+支援技術がアクセシビリティツリーを使って代替インターフェースを作り、ユーザーの命令で発火したインタラクションイベントが支援技術にルーティングされ、支援技術のユーザーはほぼこのAPIを通じてアプリケーションとやりとりをする。
 
-![Flow from application UI to accessibility tree to assistive technology to user](images/a11y-tree.png)
+![アプリケーションUIからアクセシビリティツリー、支援技術、ユーザーまでの流れ](images/a11y-tree.png)
 
-Both the alternative interface's *output*
-(e.g. speech and tones,
-updating a [braille display](https://en.wikipedia.org/wiki/Refreshable_braille_display),
-moving a [screen magnifier's](https://en.wikipedia.org/wiki/Screen_magnifier) focus)
-and *input*
-(e.g. keyboard shortcuts, gestures, braille routing keys,
-[switch devices](https://en.wikipedia.org/wiki/Switch_access), voice input)
-are completely the responsibility of the assistive technology,
-and are abstracted away from the application.
+代替インターフェースの *出力* （例えば、音声やトーン、[点字ディスプレイ](https://en.wikipedia.org/wiki/Refreshable_braille_display)の更新、[スクリーンルーペ](https://en.wikipedia.org/wiki/Screen_magnifier)のフォーカスの移動)、また *入力* （例えば、キーボードショートカット、ジェスチャー、点字ルーティングキー、[スイッチ機器](https://en.wikipedia.org/wiki/Switch_access)、音声入力など）は完全に支援技術の責務で、アプリケーションの役割ではない。
 
-For example, a [VoiceOver](https://www.apple.com/voiceover/info/guide/) user
-interacting with a native application on OS X
-might press the key combination
-"Control Option Spacebar" to indicate that they wish to click the UI element which the screen reader is currently visiting.
+例えば、OS Xのネイティブアプリケーションを使用する[VoiceOver](https://www.apple.com/voiceover/info/guide/)ユーザーは、「control、option、スペースバー」キーの組み合わせ押す。それはスクリーンリーダーが現在いるUI要素をクリックするということを示す。
 
-![A full round trip from UI element to accessibility node to assistive technology to user to user keypress to accessibility API action method back to UI element](images/a11y-tree-example.png)
+![UIの要素からアクセシビリティノード、支援技術、ユーザー、ユーザーのキー操作、アクセシビリティAPIのアクションをUI要素に戻す往復](images/a11y-tree-example.png)
 
-These keypresses would never be passed to the application,
-but would be interpreted by the screen reader,
-which would then call the
-[`accessibilityPerformPress()`](https://developer.apple.com/reference/appkit/nsaccessibilitybutton/1525542-accessibilityperformpress?language=objc)
-function on the accessibility node representing the UI element in question.
-The application can then handle the press action;
-typically, this routes to the code which would handle a click event.
+これらのキー押下はアプリケーションに渡されることはないが、スクリーンリーダーが受け取り、[`accessibilityPerformPress()`](https://developer.apple.com/reference/appkit/nsaccessibilitybutton/1525542-accessibilityperformpress?language=objc)関数を該当のUI要素を示すアクセシビリティノード上で実行する。アプリケーションはプレスアクションを処理し、通常はクリックイベントを処理するコードにルーティングされる。
 
-Accessibility APIs are also popular for testing and automation.
-They provide a way to examine an application's state and manipulate its UI from out-of-process,
-in a robust and comprehensive way.
-While assistive technology for users with disabilities
-is typically the primary motivator for accessibility APIs,
-it's important to understand that these APIs are quite general
-and have many other uses.
+アクセシビリティAPIはテストや自動化でもよく利用される。それらは堅牢で包括的な方法でアプリケーションの状態を調査、またプロセスの外からUIを操作する方法を提供する。通常、アクセシビリティAPIの主な動機は障害を持つユーザーのための支援技術だが、これらのAPIが一般的で多くの用途があることを理解することは重要である。
 
 ### Accessibility node properties
 
