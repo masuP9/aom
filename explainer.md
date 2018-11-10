@@ -32,7 +32,7 @@
     - [このAPIの対象者](#audience-for-the-proposed-api)
     - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
   - [次のステップ](#next-steps)
-    - [Incubation](#incubation)
+    - [インキュベーション](#incubation)
   - [Additional thanks](#additional-thanks)
 - [付録](#appendices)
   - [Background: assistive technology and the accessibility tree](#background-assistive-technology-and-the-accessibility-tree)
@@ -547,20 +547,13 @@ GitHub上で問題を報告することができる。
 
 https://github.com/WICG/aom/issues
 
-### Incubation
+### インキュベーション
 
-We intend to continue development of this spec as part of the
-[Web Platform Incubator Community Group (WICG)](https://www.w3.org/community/wicg/).
-Over time it may move into its own community group.
+[Web Platform Incubator Community Group (WICG)](https://www.w3.org/community/wicg/)の一部としてこの仕様の開発は継続するつもりだが、時が経てば自身のコミュニティグループに開発が映るかもしれない。
 
-Our intent is for this group's work to be almost entirely orthogonal to the
-current work of the [Web Accessibility Initiative](https://www.w3.org/WAI/)
-groups such as [ARIA](https://www.w3.org/TR/wai-aria/). While ARIA defines
-structural markup and semantics for accessibility properties on the web,
-often requiring coordination with assistive technology vendors and native platform
-APIs, the AOM simply provides a parallel JavaScript API that provides
-more low-level control for developers and fills in gaps in the web platform,
-but without introducing any new semantics.
+このグループの活動は、[ARIA](https://www.w3.org/TR/wai-aria/)などの[Web Accessibility Initiative](https://www.w3.org/WAI/)の現在の活動からは全体的にほとんど独立している。
+
+ARIAがWeb上のアクセシビリティプロパティのための構造的なマークアップとセマンティクスを定義している際には、しばしば支援技術のベンダーやネイティブプラットフォームのAPIと調整をしなければならないが、AOMは単に開発者のためにより低レベルの制御ができる並列のJavaScriptのAPIを提供し、ウェブプラットフォームのギャップを埋めるにとどまり、新しいセマンティクスを導入することは無い。
 
 ## Additional thanks
 
