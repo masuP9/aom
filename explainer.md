@@ -33,7 +33,7 @@
     - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
   - [次のステップ](#next-steps)
     - [インキュベーション](#incubation)
-  - [Additional thanks](#additional-thanks)
+  - [謝辞](#additional-thanks)
 - [付録](#appendices)
   - [Background: assistive technology and the accessibility tree](#background-assistive-technology-and-the-accessibility-tree)
     - [Accessibility node properties](#accessibility-node-properties)
@@ -555,9 +555,9 @@ https://github.com/WICG/aom/issues
 
 ARIAがWeb上のアクセシビリティプロパティのための構造的なマークアップとセマンティクスを定義している際には、しばしば支援技術のベンダーやネイティブプラットフォームのAPIと調整をしなければならないが、AOMは単に開発者のためにより低レベルの制御ができる並列のJavaScriptのAPIを提供し、ウェブプラットフォームのギャップを埋めるにとどまり、新しいセマンティクスを導入することは無い。
 
-## Additional thanks
+## 謝辞
 
-Many thanks for valuable feedback, advice, and tools from:
+価値のあるフィードバックや助言、ツールを提供してくれた
 
 * Alex Russell
 * Bogdan Brinza
@@ -573,8 +573,9 @@ Many thanks for valuable feedback, advice, and tools from:
 * Robin Berjon
 * Tess O'Connor
 
-Bogdan Brinza and Cynthia Shelley of Microsoft were credited as authors of an
-earlier draft of this spec but are no longer actively participating.
+に多大な感謝を。
+
+マイクロソフトの Bogdan Brinza と Cynthia Shelley は現在は積極的に参加していないが、この仕様の最初の草案に貢献した。
 
 # 付録
 
