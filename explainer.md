@@ -11,36 +11,36 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-  - [はじめに](#introduction)
-  - [モチベーションとなるユースケース](#motivating-use-cases)
-  - [アクセシビリティオブジェクトモデル](#the-accessibility-object-model)
-    - [ARIA属性を反映する](#reflecting-aria-attributes)
-    - [要素の参照を反映する](#reflecting-element-references)
-      - [Use case 2: Setting relationship properties without needing to use IDREFs](#use-case-2-setting-relationship-properties-without-needing-to-use-idrefs)
-    - [Custom ElementsのAPI](#custom-elements-apis)
-      - [ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する](#use-case-1-setting-non-reflected-default-accessibility-properties-for-web-components)
-        - [customElements.define() を利用したデフォルトセマンティクス](#default-semantics-via-customelementsdefine)
-        - [`ElementInternals` オブジェクトを利用した動的なインスタンス単位のセマンティクス](#per-instance-dynamic-semantics-via-the-createdcallback-reaction)
-    - [支援技術からのユーザーアクションイベント](#user-action-events-from-assistive-technology)
-      - [新しい入力イベントタイプ](#new-inputevent-types)
-      - [ユースケース 3: 支援技術からのイベントをリッスンする](#use-case-3-listening-for-events-from-assistive-technology)
-    - [仮想アクセシビリティノード](#virtual-accessibility-nodes)
-      - [ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する](#use-case-4-adding-non-dom-nodes-virtual-nodes-to-the-accessibility-tree)
-    - [`ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認](#full-introspection-of-an-accessibility-tree---computedaccessiblenode)
-      - [ユースケース5: 計算されたツリーを確認する](#use-case-5--introspecting-the-computed-tree)
-      - [なぜ最終的に計算されたプロパティにアクセスするのか](#why-is-accessing-the-computed-properties-being-addressed-last)
-    - [このAPIの対象者](#audience-for-the-proposed-api)
-    - [`AccessibleNode`に何が起こったのか?](#what-happened-to-accessiblenode)
-  - [次のステップ](#next-steps)
-    - [Incubation](#incubation)
-  - [Additional thanks](#additional-thanks)
-- [付録](#appendices)
-  - [Background: assistive technology and the accessibility tree](#background-assistive-technology-and-the-accessibility-tree)
-    - [Accessibility node properties](#accessibility-node-properties)
-  - [Background: DOM tree, accessibility tree and platform accessibility APIs](#background-dom-tree-accessibility-tree-and-platform-accessibility-apis)
-    - [Mapping native HTML to the accessibility tree](#mapping-native-html-to-the-accessibility-tree)
+  - [はじめに](#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB)
+  - [モチベーションとなるユースケース](#%E3%83%A2%E3%83%81%E3%83%99%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%A8%E3%81%AA%E3%82%8B%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9)
+  - [アクセシビリティオブジェクトモデル](#%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%83%A2%E3%83%87%E3%83%AB)
+    - [ARIA属性を反映する](#aria%E5%B1%9E%E6%80%A7%E3%82%92%E5%8F%8D%E6%98%A0%E3%81%99%E3%82%8B)
+    - [要素の参照を反映する](#%E8%A6%81%E7%B4%A0%E3%81%AE%E5%8F%82%E7%85%A7%E3%82%92%E5%8F%8D%E6%98%A0%E3%81%99%E3%82%8B)
+      - [ユースケース 2: IDREFsを使用することなく関係プロパティを設定する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-2-idrefs%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AA%E3%81%8F%E9%96%A2%E4%BF%82%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B)
+    - [Custom ElementsのAPI](#custom-elements%E3%81%AEapi)
+      - [ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B91-%E9%9D%9E%E5%8F%8D%E6%98%A0%E3%81%AE%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%82%92%E3%82%A6%E3%82%A7%E3%83%96%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E3%81%AB%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B)
+        - [customElements.define() を利用したデフォルトセマンティクス](#customelementsdefine-%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%9F%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%BB%E3%83%9E%E3%83%B3%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9)
+        - [`ElementInternals` オブジェクトを利用した動的なインスタンス単位のセマンティクス](#elementinternals-%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%9F%E5%8B%95%E7%9A%84%E3%81%AA%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E5%8D%98%E4%BD%8D%E3%81%AE%E3%82%BB%E3%83%9E%E3%83%B3%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9)
+    - [支援技術からのユーザーアクションイベント](#%E6%94%AF%E6%8F%B4%E6%8A%80%E8%A1%93%E3%81%8B%E3%82%89%E3%81%AE%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%A2%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88)
+      - [新しい入力イベントタイプ](#%E6%96%B0%E3%81%97%E3%81%84%E5%85%A5%E5%8A%9B%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E3%82%BF%E3%82%A4%E3%83%97)
+      - [ユースケース 3: 支援技術からのイベントをリッスンする](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-3-%E6%94%AF%E6%8F%B4%E6%8A%80%E8%A1%93%E3%81%8B%E3%82%89%E3%81%AE%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E3%82%92%E3%83%AA%E3%83%83%E3%82%B9%E3%83%B3%E3%81%99%E3%82%8B)
+    - [仮想アクセシビリティノード](#%E4%BB%AE%E6%83%B3%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%8E%E3%83%BC%E3%83%89)
+      - [ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B94-dom%E3%81%A7%E3%81%AA%E3%81%84%E4%BB%AE%E6%83%B3%E3%81%AE%E3%83%8E%E3%83%BC%E3%83%89%E3%82%92%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%AB%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B)
+    - [`ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認](#computedaccessiblenode-%E3%81%AB%E3%82%88%E3%82%8B%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%AE%E5%AE%8C%E5%85%A8%E3%81%AA%E7%A2%BA%E8%AA%8D)
+      - [ユースケース5: 計算されたツリーを確認する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B95-%E8%A8%88%E7%AE%97%E3%81%95%E3%82%8C%E3%81%9F%E3%83%84%E3%83%AA%E3%83%BC%E3%82%92%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B)
+      - [なぜ最終的に計算されたプロパティにアクセスするのか](#%E3%81%AA%E3%81%9C%E6%9C%80%E7%B5%82%E7%9A%84%E3%81%AB%E8%A8%88%E7%AE%97%E3%81%95%E3%82%8C%E3%81%9F%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%81%AB%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%99%E3%82%8B%E3%81%AE%E3%81%8B)
+    - [このAPIの対象者](#%E3%81%93%E3%81%AEapi%E3%81%AE%E5%AF%BE%E8%B1%A1%E8%80%85)
+    - [`AccessibleNode`に何が起こったのか?](#accessiblenode%E3%81%AB%E4%BD%95%E3%81%8C%E8%B5%B7%E3%81%93%E3%81%A3%E3%81%9F%E3%81%AE%E3%81%8B)
+  - [次のステップ](#%E6%AC%A1%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97)
+    - [インキュベーション](#%E3%82%A4%E3%83%B3%E3%82%AD%E3%83%A5%E3%83%99%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+  - [謝辞](#%E8%AC%9D%E8%BE%9E)
+- [付録](#%E4%BB%98%E9%8C%B2)
+  - [背景: 支援技術とアクセシビリティツリー](#%E8%83%8C%E6%99%AF-%E6%94%AF%E6%8F%B4%E6%8A%80%E8%A1%93%E3%81%A8%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC)
+    - [アクセシビリティノードプロパティ](#%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%8E%E3%83%BC%E3%83%89%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3)
+  - [背景: DOMツリー、アクセシビリティツリー、そしてプラットフォームのアクセシビリティAPI](#%E8%83%8C%E6%99%AF-dom%E3%83%84%E3%83%AA%E3%83%BC%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%9D%E3%81%97%E3%81%A6%E3%83%97%E3%83%A9%E3%83%83%E3%83%88%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%81%AE%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3api)
+    - [ネイティブHTMLをアクセシビリティツリーにマッピングする](#%E3%83%8D%E3%82%A4%E3%83%86%E3%82%A3%E3%83%96html%E3%82%92%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%AB%E3%83%9E%E3%83%83%E3%83%94%E3%83%B3%E3%82%B0%E3%81%99%E3%82%8B)
     - [ARIA](#aria)
-  - [Appendix: `AccessibleNode` naming](#appendix-accessiblenode-naming)
+  - [付録: `AccessibleNode` の命名](#%E4%BB%98%E9%8C%B2-accessiblenode-%E3%81%AE%E5%91%BD%E5%90%8D)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -547,24 +547,17 @@ GitHub上で問題を報告することができる。
 
 https://github.com/WICG/aom/issues
 
-### Incubation
+### インキュベーション
 
-We intend to continue development of this spec as part of the
-[Web Platform Incubator Community Group (WICG)](https://www.w3.org/community/wicg/).
-Over time it may move into its own community group.
+[Web Platform Incubator Community Group (WICG)](https://www.w3.org/community/wicg/)の一部としてこの仕様の開発は継続するつもりだが、時が経てば自身のコミュニティグループに開発が映るかもしれない。
 
-Our intent is for this group's work to be almost entirely orthogonal to the
-current work of the [Web Accessibility Initiative](https://www.w3.org/WAI/)
-groups such as [ARIA](https://www.w3.org/TR/wai-aria/). While ARIA defines
-structural markup and semantics for accessibility properties on the web,
-often requiring coordination with assistive technology vendors and native platform
-APIs, the AOM simply provides a parallel JavaScript API that provides
-more low-level control for developers and fills in gaps in the web platform,
-but without introducing any new semantics.
+このグループの活動は、[ARIA](https://www.w3.org/TR/wai-aria/)などの[Web Accessibility Initiative](https://www.w3.org/WAI/)の現在の活動からは全体的にほとんど独立している。
 
-## Additional thanks
+ARIAがWeb上のアクセシビリティプロパティのための構造的なマークアップとセマンティクスを定義している際には、しばしば支援技術のベンダーやネイティブプラットフォームのAPIと調整をしなければならないが、AOMは単に開発者のためにより低レベルの制御ができる並列のJavaScriptのAPIを提供し、ウェブプラットフォームのギャップを埋めるにとどまり、新しいセマンティクスを導入することは無い。
 
-Many thanks for valuable feedback, advice, and tools from:
+## 謝辞
+
+価値のあるフィードバックや助言、ツールを提供してくれた
 
 * Alex Russell
 * Bogdan Brinza
@@ -580,176 +573,101 @@ Many thanks for valuable feedback, advice, and tools from:
 * Robin Berjon
 * Tess O'Connor
 
-Bogdan Brinza and Cynthia Shelley of Microsoft were credited as authors of an
-earlier draft of this spec but are no longer actively participating.
+に多大な感謝を。
+
+マイクロソフトの Bogdan Brinza と Cynthia Shelley は現在は積極的に参加していないが、この仕様の最初の草案に貢献した。
 
 # 付録
 
-## Background: assistive technology and the accessibility tree
+## 背景: 支援技術とアクセシビリティツリー
 
-Assistive technology, in this context, refers to a third party application
-which augments or replaces the existing UI for an application.
-One well-known example is a screen reader,
-which replaces the visual UI and pointer-based UI
-with an auditory output (speech and tones)
-and a keyboard and/or gesture-based input mechanism.
+この仕様の中で支援技術は、アプリケーションの既存のUIを補強したり置き換えたりする第三者のアプリケーションのことを指す。よく知られた例の一つとしてスクリーンリーダーがある。スクリーンリーダーは視覚的でポインターベースのUIを、聴覚出力（音声、およびトーン）と、キーワード、ジェスチャーの両方、またはいずれかによる入力メカニズムに置き換える。
 
-Many assistive technologies interact with a web page via accessibility APIs, such as
-[UIAutomation](https://msdn.microsoft.com/en-us/library/windows/desktop/ee684009.aspx)
-on Windows, or
-[NSAccessibility](https://developer.apple.com/library/mac/documentation/AppKit/Reference/NSAccessibility_Protocol_Reference/)
-on OS X.
-These APIs allow an application to expose a tree of objects representing the application's interface,
-typically with the root node representing the application window,
-with various levels of grouping node descendants down to individual interactive elements.
-This is referred to as the **accessibility tree**.
+多くの支援技術は、アクセシビリティAPIを通じてウェブページとやりとりする。たとえば、Windows上の[UIAutomation](https://msdn.microsoft.com/en-us/library/windows/desktop/ee684009.aspx)や、OS Xの[NSAccessibility](https://developer.apple.com/library/mac/documentation/AppKit/Reference/NSAccessibility_Protocol_Reference/)などがある。これらのAPIを利用するとアプリケーションのインターフェースを示すオブジェクトのツリーを公開することができる。アプリケーションウィンドウのことを示すルートノードから、個々のインタラクティブな要素まで様々なレベルのノードがグループ化されている。これは **アクセシビリティツリー** と呼ばれている。
 
-An assistive technology user interacts with the application almost exclusively via this API,
-as the assistive technology uses it both to create the alternative interface,
-and to route user interaction events triggered by the user's commands to the assistive technology.
+支援技術がアクセシビリティツリーを使って代替インターフェースを作り、ユーザーの命令で発火したインタラクションイベントが支援技術にルーティングされ、支援技術のユーザーはほぼこのAPIを通じてアプリケーションとやりとりをする。
 
-![Flow from application UI to accessibility tree to assistive technology to user](images/a11y-tree.png)
+![アプリケーションUIからアクセシビリティツリー、支援技術、ユーザーまでの流れ](images/a11y-tree.png)
 
-Both the alternative interface's *output*
-(e.g. speech and tones,
-updating a [braille display](https://en.wikipedia.org/wiki/Refreshable_braille_display),
-moving a [screen magnifier's](https://en.wikipedia.org/wiki/Screen_magnifier) focus)
-and *input*
-(e.g. keyboard shortcuts, gestures, braille routing keys,
-[switch devices](https://en.wikipedia.org/wiki/Switch_access), voice input)
-are completely the responsibility of the assistive technology,
-and are abstracted away from the application.
+代替インターフェースの *出力* （例えば、音声やトーン、[点字ディスプレイ](https://en.wikipedia.org/wiki/Refreshable_braille_display)の更新、[スクリーンルーペ](https://en.wikipedia.org/wiki/Screen_magnifier)のフォーカスの移動)、また *入力* （例えば、キーボードショートカット、ジェスチャー、点字ルーティングキー、[スイッチ機器](https://en.wikipedia.org/wiki/Switch_access)、音声入力など）は完全に支援技術の責務で、アプリケーションの役割ではない。
 
-For example, a [VoiceOver](https://www.apple.com/voiceover/info/guide/) user
-interacting with a native application on OS X
-might press the key combination
-"Control Option Spacebar" to indicate that they wish to click the UI element which the screen reader is currently visiting.
+例えば、OS Xのネイティブアプリケーションを使用する[VoiceOver](https://www.apple.com/voiceover/info/guide/)ユーザーは、「control、option、スペースバー」キーの組み合わせ押す。それはスクリーンリーダーが現在いるUI要素をクリックするということを示す。
 
-![A full round trip from UI element to accessibility node to assistive technology to user to user keypress to accessibility API action method back to UI element](images/a11y-tree-example.png)
+![UIの要素からアクセシビリティノード、支援技術、ユーザー、ユーザーのキー操作、アクセシビリティAPIのアクションをUI要素に戻す往復](images/a11y-tree-example.png)
 
-These keypresses would never be passed to the application,
-but would be interpreted by the screen reader,
-which would then call the
-[`accessibilityPerformPress()`](https://developer.apple.com/reference/appkit/nsaccessibilitybutton/1525542-accessibilityperformpress?language=objc)
-function on the accessibility node representing the UI element in question.
-The application can then handle the press action;
-typically, this routes to the code which would handle a click event.
+これらのキー押下はアプリケーションに渡されることはないが、スクリーンリーダーが受け取り、[`accessibilityPerformPress()`](https://developer.apple.com/reference/appkit/nsaccessibilitybutton/1525542-accessibilityperformpress?language=objc)関数を該当のUI要素を示すアクセシビリティノード上で実行する。アプリケーションはプレスアクションを処理し、通常はクリックイベントを処理するコードにルーティングされる。
 
-Accessibility APIs are also popular for testing and automation.
-They provide a way to examine an application's state and manipulate its UI from out-of-process,
-in a robust and comprehensive way.
-While assistive technology for users with disabilities
-is typically the primary motivator for accessibility APIs,
-it's important to understand that these APIs are quite general
-and have many other uses.
+アクセシビリティAPIはテストや自動化でもよく利用される。それらは堅牢で包括的な方法でアプリケーションの状態を調査、またプロセスの外からUIを操作する方法を提供する。通常、アクセシビリティAPIの主な動機は障害を持つユーザーのための支援技術だが、これらのAPIが一般的で多くの用途があることを理解することは重要である。
 
-### Accessibility node properties
+### アクセシビリティノードプロパティ
 
-Each node in the accessibility tree may be referred to as an **accessibility node**.
-An accessibility node always has a **role**, indicating its semantic purpose.
-This may be a grouping role,
-indicating that this node merely exists to contain and group other nodes,
-or it may be an interactive role,
-such as `"button"`.
+アクセシビリティツリーの各ノードは **アクセシビリティノード** と呼ばれる。
 
-![Accessibility nodes in an accessibility tree, showing roles, names, states and properties](images/a11y-node.png)
+アクセシビリティノードは常に一つのセマンティックな目的を示す **ロール** を持つ。
+これは単に他のノードを包含することを示すグループ化するロールであってもよいし、または `"button"` のようなインタラクティブなロールであってもよい。
 
-The user, via assistive technology, may explore the accessibility tree at various levels.
-They may interact with grouping nodes,
-such as a landmark element which helps a user navigate sections of the page,
-or they may interact with interactive nodes,
-such as a button.
-In both of these cases,
-the node will usually need to have a **label** (often referred to as a **name**)
-to indicate the node's purpose in context.
-For example, a button may have a label of "Ok" or "Menu".
+![アクセシビリティツリーの中のアクセシビリティノード。ロール、名前、状態とプロパティを示している。](images/a11y-node.png)
 
-Accessibility nodes may also have other properties,
-such as the current **value**
-(e.g. `"10"` for a range, or `"Jane"` for a text input),
-or **state** information
-(e.g. `"checked"` for a checkbox, or `"focused"`).
+ユーザーは支援技術を介して、様々なレベルでアクセシビリティツリーを探索することができる。かれらは、ランドマーク要素のようなユーザーのページのセクションへの移動を助けるグループ化されたノードとやり取りすることができたり、ボタンのようなインタラクティブなノードとやり取りすることができる
 
-Interactive accessibility nodes may also have certain **actions** which may be performed on them.
-For example, a button may expose a `"press"` action, and a slider may expose
-`"increment"` and `"decrement"` actions.
+それらの双方の場合において、文脈の中でのノードの役割を示すため、ノードは通常 **ラベル** （しばしば **名前** と呼ばれる）を必要とする。例えば、ボタンは "OK" や "メニュー" というラベルを持つ。
+
+アクセシビリティノードはまた現在の **値** （範囲であれば `"10"` だったり、テキスト入力であれば `"ジェーン"` であったり）のような他のプロパティを持ったり、（チェックボックスの `"checked"` または `"focused"`など）の状態の情報を持つことができる。
+
+インタラクティブなアクセシビリティノードは、それらに対して実行される特定の **アクション** も持つことができる。例えば、ボタンは `"press"` アクションを公開するし、スライダーは `"increment"` と `"decrement"` アクションを公開する。
 
 These properties and actions are referred to as the *semantics* of a node.
 Each accessibility API expresses these concepts slightly differently,
 but they are all conceptually similar.
 
-##  Background: DOM tree, accessibility tree and platform accessibility APIs
+これらのプロパティとアクションはノードの *セマンティクス* と呼ばれる。各アクセシビリティAPIにおいて少しずつ違いはるが、概念的にはほとんど似ている。
 
-The web has rich support for making applications accessible,
-but only via a *declarative* API.
+## 背景: DOMツリー、アクセシビリティツリー、そしてプラットフォームのアクセシビリティAPI
 
-The DOM tree is translated, in parallel,
-into the primary, visual representation of the page,
-and the accessibility tree,
-which is in turn accessed via one or more *platform-specific* accessibility APIs.
+ウェブはアクセシブルなアプリケーションを制作するのに多くのサポートを提供しているが、それらは *宣言的* なAPIを通じてのみである。
 
-![HTML translated into DOM tree translated into visual UI and accessibility tree](images/DOM-a11y-tree.png)
+DOMツリーは翻訳され、並行して、主に、ページの視覚的な表現とアクセシビリティツリーに変換される。アクセシビリティツリーは、一つまたは複数の *プラットフォーム固有の* アクセシビリティAPIを介してアクセスされる。
 
-Some browsers support multiple accessibility APIs across different platforms,
-while others are specific to one accessibility API.
-However, any browser that supports at least one native accessibility API
-has some mechanism for exposing a tree structure of semantic information.
-We refer to that mechanism, regardless of implementation details,
-as the **accessibility tree** for the purposes of this API.
+![HTMLがDOMツリーに変換され、されに視覚的なUIとアクセシビリティツリーに変換される](images/DOM-a11y-tree.png)
 
-### Mapping native HTML to the accessibility tree
+異なるプラットフォーム間で複数のアクセシビリティAPIをサポートしているブラウザもあれば、特定のアクセシビリティのみをサポートしているブラウザもある。しかし、少なくとも１つのネイティブアクセシビリティAPIをサポートするブラウザはセマンティックの情報構造ツリーを公開するためのメカニズムを持っている。このAPIの目的のため、実装の詳細は気にせずそれらのAPIを参照する。
 
-Native HTML elements are implicitly mapped to accessibility APIs.
-For example, an  `<img>` element will automatically be mapped
-to an accessibility node with a role of `"image"`
-and a label based on the `alt` attribute (if present).
+### ネイティブHTMLをアクセシビリティツリーにマッピングする
 
-![<img> node translated into an image on the page and an accessibility node](images/a11y-node-img.png)
+ネイティブHTML要素はアクセシビリティAPIに暗黙的にマップされる。例えば `<img>` 要素は自動的に `image` ロールを持つアクセシビリティノードにマップされ、 `alt` 属性（があれば）によってラベリングされる。
 
+![<img>ノードが、ページ、またアクセシビリティノード上の image として変換される](images/a11y-node-img.png)
 
 ### ARIA
 
-Alternatively, [ARIA](https://www.w3.org/TR/wai-aria-1.1/)
-allows developers to annotate elements with attributes to override
-the default role and semantic properties of an element -
-but not to expose any accessible actions.
+また、[ARIA](https://www.w3.org/TR/wai-aria-1.1/)を利用することで開発者が属性によって要素に注釈をつけ、要素のデフォルトのロールやセマンティックプロパティを上書きすることができるが、アクセシブルアクションは公開できない。
 
-![<div role=checkbox aria-checked=true> translated into a visual presentation and a DOM node](images/a11y-node-ARIA.png)
+![<div role=checkbox aria-checked=true> は視覚的なUIとDOMノードに変換される](images/a11y-node-ARIA.png)
 
-In either case there's a one-to-one correspondence
-between a DOM node and a node in the accessibility tree,
-and there is minimal fine-grained control over the semantics of the corresponding accessibility node.
+どちらの場合も、DOMノードとアクセシビリティツリー内のノードは1対1で対応しており、対応するアクセシビリティノードのセマンティクスにたいする最小限の細やかな制御ができる。
 
-## Appendix: `AccessibleNode` naming
+## 付録: `AccessibleNode` の命名
 
-We have chosen the name `AccessibleNode` for the class representing one
-node in the virtual accessibility tree.
+仮想アクセシビリティツリー内の一つのノードを示すクラスの名前を `AccessibleNode` とした。
 
-In choosing this name, we have tried to pick a balance between brevity,
-clarity, and generality.
+この名前を選ぶ際、簡潔さと明確さ、そして普遍性の間のバランスを取ろうとした。
 
-* Brevity: The name should be as short as possible.
-* Clarity: The name should reflect the function of the API,
-  without using opaque abbreviations or contractions.
-* Generality: The name should not be too narrow and limit the scope of the spec.
+* 簡潔さ: 名前は可能な限り短くある必要がある
+* 明確さ: 名前は、分かりにくい略語や短縮形を利用せず、APIの機能を反映している必要がある
+* 普遍性: 名前は仕様の範囲を制限したり狭め過ぎたりしてはいけない
 
-Below we've collected all of the serious names that have been proposed
-and a concise summary of the pros and cons of each.
+以下に、真剣に提案されたすべての名前のそれぞれの長所と短所を簡潔にまとめた。
 
-Suggestions for alternate names or votes for one of the other names below
-are still welcome, but please try to carefully consider the existing suggestions and
-their cons first. Rough consensus has already been achieved and we'd rather work
-on shipping something we can all live with rather than trying to get the perfect
-name.
+まだ以下の名前への投票や違う名前の提案は歓迎しているが、まずは既存の提案とその懸念点を慎重に考慮してほしい。すでに大筋で合意には至っており、完璧な命名にしようとするよりはむしろ世に出すよう努めていきたい。
 
-Proposed name          | Pros                                                      | Cons
------------------------|-----------------------------------------------------------|-------
-`Aria`                 | Short; already associated with accessibility              | Confusing because ARIA is the name of a spec, not the name of one node in an accessibility tree.
-`AriaNode`             | Short; already associated with accessibility              | Implies the AOM will only expose ARIA attributes, which is too limiting
-`A11ement`             | Short; close to `Element`                                 | Hard to pronounce; contains numbers; not necessarily associated with an element; hard to understand meaning
-`A11y`                 | Very short; doesn't make assertions about DOM association | Hard to pronounce; contains numbers; hard to understand meaning
-`Accessible`           | One full word; not too hard to type                       | Not a noun
-`AccessibleNode`       | Very explicit; not too hard to read                       | Long; possibly confusing (are other `Node`s not accessible?)
-`AccessibleElement`    | Very explicit                                             | Even longer; confusing (are other `Element`s not accessible?)
-`AccessibilityNode`    | Very explicit                                             | Extremely long; nobody on the planet can type 'accessibility' correctly first try
-`AccessibilityElement` | Very explicit                                             | Ludicrously long; still requires typing 'accessibility'
+提案された名前           | 長所                                   | 短所
+-----------------------|---------------------------------------|-------
+`Aria`                 | 短い; すでにアクセシビリティと関連している   | ARIAは仕様の名前であり、アクセシビリティツリー内のノードの名前でないため混乱する
+`AriaNode`             | 短い; すでにアクセシビリティと関連している   | AOMはARIA属性のみを公開することを暗示していて制限的すぎる
+`A11ement`             | 短い; `Element` に近い                  | 読みにくい; 数字が含まれている; 要素と必ずしも関連付けられていない; 分かりにくい
+`A11y`                 | 非常に短い; DOMの関連団体について主張しない  | 読みにくい; 数字が含まれている; 分かりにくい
+`Accessible`           | 一つの完全な単語である; タイプが難しくない   | 名詞ではない
+`AccessibleNode`       | 非常に明確; 読むのが簡単                  | 長い; 混乱する可能性がある (他の `Node` はアクセシブルではない?)
+`AccessibleElement`    | 非常に明確                              | さらに長い; 混乱する (他の `Element` はアクセシブルではない?)
+`AccessibilityNode`    | 非常に明確                              | 非常に長い; 初めてのときに 'accessibility' を正確にタイプできる人はこの星にいない
+`AccessibilityElement` | 非常に明確                              | 笑えるほど長い; まだ 'accessibility' とタイプしないといけない
