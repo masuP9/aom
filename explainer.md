@@ -40,7 +40,7 @@
   - [背景: DOMツリー、アクセシビリティツリー、そしてプラットフォームのアクセシビリティAPI](#background-dom-tree-accessibility-tree-and-platform-accessibility-apis)
     - [ネイティブHTMLをアクセシビリティツリーにマッピングする](#mapping-native-html-to-the-accessibility-tree)
     - [ARIA](#aria)
-  - [Appendix: `AccessibleNode` naming](#appendix-accessiblenode-naming)
+  - [付録: `AccessibleNode` の命名](#appendix-accessiblenode-naming)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -646,36 +646,28 @@ DOMツリーは翻訳され、並行して、主に、ページの視覚的な�
 
 どちらの場合も、DOMノードとアクセシビリティツリー内のノードは1対1で対応しており、対応するアクセシビリティノードのセマンティクスにたいする最小限の細やかな制御ができる。
 
-## Appendix: `AccessibleNode` naming
+## 付録: `AccessibleNode` の命名
 
-We have chosen the name `AccessibleNode` for the class representing one
-node in the virtual accessibility tree.
+仮想アクセシビリティツリー内の一つのノードを示すクラスの名前を `AccessibleNode` とした。
 
-In choosing this name, we have tried to pick a balance between brevity,
-clarity, and generality.
+この名前を選ぶ際、簡潔さと明確さ、そして普遍性の間のバランスを取ろうとした。
 
-* Brevity: The name should be as short as possible.
-* Clarity: The name should reflect the function of the API,
-  without using opaque abbreviations or contractions.
-* Generality: The name should not be too narrow and limit the scope of the spec.
+* 簡潔さ: 名前は可能な限り短くある必要がある
+* 明確さ: 名前は、分かりにくい略語や短縮形を利用せず、APIの機能を反映している必要がある
+* 普遍性: 名前は仕様の範囲を制限したり狭め過ぎたりしてはいけない
 
-Below we've collected all of the serious names that have been proposed
-and a concise summary of the pros and cons of each.
+以下に、真剣に提案されたすべての名前のそれぞれの長所と短所を簡潔にまとめた。
 
-Suggestions for alternate names or votes for one of the other names below
-are still welcome, but please try to carefully consider the existing suggestions and
-their cons first. Rough consensus has already been achieved and we'd rather work
-on shipping something we can all live with rather than trying to get the perfect
-name.
+まだ以下の名前への投票や違う名前の提案は歓迎しているが、まずは既存の提案とその懸念点を慎重に考慮してほしい。すでに大筋で合意には至っており、完璧な命名にしようとするよりはむしろ世に出すよう努めていきたい。
 
-Proposed name          | Pros                                                      | Cons
------------------------|-----------------------------------------------------------|-------
-`Aria`                 | Short; already associated with accessibility              | Confusing because ARIA is the name of a spec, not the name of one node in an accessibility tree.
-`AriaNode`             | Short; already associated with accessibility              | Implies the AOM will only expose ARIA attributes, which is too limiting
-`A11ement`             | Short; close to `Element`                                 | Hard to pronounce; contains numbers; not necessarily associated with an element; hard to understand meaning
-`A11y`                 | Very short; doesn't make assertions about DOM association | Hard to pronounce; contains numbers; hard to understand meaning
-`Accessible`           | One full word; not too hard to type                       | Not a noun
-`AccessibleNode`       | Very explicit; not too hard to read                       | Long; possibly confusing (are other `Node`s not accessible?)
-`AccessibleElement`    | Very explicit                                             | Even longer; confusing (are other `Element`s not accessible?)
-`AccessibilityNode`    | Very explicit                                             | Extremely long; nobody on the planet can type 'accessibility' correctly first try
-`AccessibilityElement` | Very explicit                                             | Ludicrously long; still requires typing 'accessibility'
+提案された名前           | 長所                                   | 短所
+-----------------------|---------------------------------------|-------
+`Aria`                 | 短い; すでにアクセシビリティと関連している   | ARIAは仕様の名前であり、アクセシビリティツリー内のノードの名前でないため混乱する
+`AriaNode`             | 短い; すでにアクセシビリティと関連している   | AOMはARIA属性のみを公開することを暗示していて制限的すぎる
+`A11ement`             | 短い; `Element` に近い                  | 読みにくい; 数字が含まれている; 要素と必ずしも関連付けられていない; 分かりにくい
+`A11y`                 | 非常に短い; DOMの関連団体について主張しない  | 読みにくい; 数字が含まれている; 分かりにくい
+`Accessible`           | 一つの完全な単語である; タイプが難しくない   | 名詞ではない
+`AccessibleNode`       | 非常に明確; 読むのが簡単                  | 長い; 混乱する可能性がある (他の `Node` はアクセシブルではない?)
+`AccessibleElement`    | 非常に明確                              | さらに長い; 混乱する (他の `Element` はアクセシブルではない?)
+`AccessibilityNode`    | 非常に明確                              | 非常に長い; 初めてのときに 'accessibility' を正確にタイプできる人はこの星にいない
+`AccessibilityElement` | 非常に明確                              | 笑えるほど長い; まだ 'accessibility' とタイプしないといけない
