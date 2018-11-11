@@ -37,8 +37,8 @@
 - [付録](#appendices)
   - [背景: 支援技術とアクセシビリティツリー](#background-assistive-technology-and-the-accessibility-tree)
     - [アクセシビリティノードプロパティ](#accessibility-node-properties)
-  - [Background: DOM tree, accessibility tree and platform accessibility APIs](#background-dom-tree-accessibility-tree-and-platform-accessibility-apis)
-    - [Mapping native HTML to the accessibility tree](#mapping-native-html-to-the-accessibility-tree)
+  - [背景: DOMツリー、アクセシビリティツリー、そしてプラットフォームのアクセシビリティAPI](#background-dom-tree-accessibility-tree-and-platform-accessibility-apis)
+    - [ネイティブHTMLをアクセシビリティツリーにマッピングする](#mapping-native-html-to-the-accessibility-tree)
     - [ARIA](#aria)
   - [Appendix: `AccessibleNode` naming](#appendix-accessiblenode-naming)
 
@@ -622,47 +622,29 @@ but they are all conceptually similar.
 
 これらのプロパティとアクションはノードの *セマンティクス* と呼ばれる。各アクセシビリティAPIにおいて少しずつ違いはるが、概念的にはほとんど似ている。
 
-##  Background: DOM tree, accessibility tree and platform accessibility APIs
+## 背景: DOMツリー、アクセシビリティツリー、そしてプラットフォームのアクセシビリティAPI
 
-The web has rich support for making applications accessible,
-but only via a *declarative* API.
+ウェブはアクセシブルなアプリケーションを制作するのに多くのサポートを提供しているが、それらは *宣言的* なAPIを通じてのみである。
 
-The DOM tree is translated, in parallel,
-into the primary, visual representation of the page,
-and the accessibility tree,
-which is in turn accessed via one or more *platform-specific* accessibility APIs.
+DOMツリーは翻訳され、並行して、主に、ページの視覚的な表現とアクセシビリティツリーに変換される。アクセシビリティツリーは、一つまたは複数の *プラットフォーム固有の* アクセシビリティAPIを介してアクセスされる。
 
-![HTML translated into DOM tree translated into visual UI and accessibility tree](images/DOM-a11y-tree.png)
+![HTMLがDOMツリーに変換され、されに視覚的なUIとアクセシビリティツリーに変換される](images/DOM-a11y-tree.png)
 
-Some browsers support multiple accessibility APIs across different platforms,
-while others are specific to one accessibility API.
-However, any browser that supports at least one native accessibility API
-has some mechanism for exposing a tree structure of semantic information.
-We refer to that mechanism, regardless of implementation details,
-as the **accessibility tree** for the purposes of this API.
+異なるプラットフォーム間で複数のアクセシビリティAPIをサポートしているブラウザもあれば、特定のアクセシビリティのみをサポートしているブラウザもある。しかし、少なくとも１つのネイティブアクセシビリティAPIをサポートするブラウザはセマンティックの情報構造ツリーを公開するためのメカニズムを持っている。このAPIの目的のため、実装の詳細は気にせずそれらのAPIを参照する。
 
-### Mapping native HTML to the accessibility tree
+### ネイティブHTMLをアクセシビリティツリーにマッピングする
 
-Native HTML elements are implicitly mapped to accessibility APIs.
-For example, an  `<img>` element will automatically be mapped
-to an accessibility node with a role of `"image"`
-and a label based on the `alt` attribute (if present).
+ネイティブHTML要素はアクセシビリティAPIに暗黙的にマップされる。例えば `<img>` 要素は自動的に `image` ロールを持つアクセシビリティノードにマップされ、 `alt` 属性（があれば）によってラベリングされる。
 
-![<img> node translated into an image on the page and an accessibility node](images/a11y-node-img.png)
-
+![<img>ノードが、ページ、またアクセシビリティノード上の image として変換される](images/a11y-node-img.png)
 
 ### ARIA
 
-Alternatively, [ARIA](https://www.w3.org/TR/wai-aria-1.1/)
-allows developers to annotate elements with attributes to override
-the default role and semantic properties of an element -
-but not to expose any accessible actions.
+また、[ARIA](https://www.w3.org/TR/wai-aria-1.1/)を利用することで開発者が属性によって要素に注釈をつけ、要素のデフォルトのロールやセマンティックプロパティを上書きすることができるが、アクセシブルアクションは公開できない。
 
-![<div role=checkbox aria-checked=true> translated into a visual presentation and a DOM node](images/a11y-node-ARIA.png)
+![<div role=checkbox aria-checked=true> は視覚的なUIとDOMノードに変換される](images/a11y-node-ARIA.png)
 
-In either case there's a one-to-one correspondence
-between a DOM node and a node in the accessibility tree,
-and there is minimal fine-grained control over the semantics of the corresponding accessibility node.
+どちらの場合も、DOMノードとアクセシビリティツリー内のノードは1対1で対応しており、対応するアクセシビリティノードのセマンティクスにたいする最小限の細やかな制御ができる。
 
 ## Appendix: `AccessibleNode` naming
 
