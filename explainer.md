@@ -36,7 +36,7 @@
   - [謝辞](#additional-thanks)
 - [付録](#appendices)
   - [背景: 支援技術とアクセシビリティツリー](#background-assistive-technology-and-the-accessibility-tree)
-    - [Accessibility node properties](#accessibility-node-properties)
+    - [アクセシビリティノードプロパティ](#accessibility-node-properties)
   - [Background: DOM tree, accessibility tree and platform accessibility APIs](#background-dom-tree-accessibility-tree-and-platform-accessibility-apis)
     - [Mapping native HTML to the accessibility tree](#mapping-native-html-to-the-accessibility-tree)
     - [ARIA](#aria)
@@ -599,40 +599,28 @@ ARIAがWeb上のアクセシビリティプロパティのための構造的な�
 
 アクセシビリティAPIはテストや自動化でもよく利用される。それらは堅牢で包括的な方法でアプリケーションの状態を調査、またプロセスの外からUIを操作する方法を提供する。通常、アクセシビリティAPIの主な動機は障害を持つユーザーのための支援技術だが、これらのAPIが一般的で多くの用途があることを理解することは重要である。
 
-### Accessibility node properties
+### アクセシビリティノードプロパティ
 
-Each node in the accessibility tree may be referred to as an **accessibility node**.
-An accessibility node always has a **role**, indicating its semantic purpose.
-This may be a grouping role,
-indicating that this node merely exists to contain and group other nodes,
-or it may be an interactive role,
-such as `"button"`.
+アクセシビリティツリーの各ノードは **アクセシビリティノード** と呼ばれる。
 
-![Accessibility nodes in an accessibility tree, showing roles, names, states and properties](images/a11y-node.png)
+アクセシビリティノードは常に一つのセマンティックな目的を示す **ロール** を持つ。
+これは単に他のノードを包含することを示すグループ化するロールであってもよいし、または `"button"` のようなインタラクティブなロールであってもよい。
 
-The user, via assistive technology, may explore the accessibility tree at various levels.
-They may interact with grouping nodes,
-such as a landmark element which helps a user navigate sections of the page,
-or they may interact with interactive nodes,
-such as a button.
-In both of these cases,
-the node will usually need to have a **label** (often referred to as a **name**)
-to indicate the node's purpose in context.
-For example, a button may have a label of "Ok" or "Menu".
+![アクセシビリティツリーの中のアクセシビリティノード。ロール、名前、状態とプロパティを示している。](images/a11y-node.png)
 
-Accessibility nodes may also have other properties,
-such as the current **value**
-(e.g. `"10"` for a range, or `"Jane"` for a text input),
-or **state** information
-(e.g. `"checked"` for a checkbox, or `"focused"`).
+ユーザーは支援技術を介して、様々なレベルでアクセシビリティツリーを探索することができる。かれらは、ランドマーク要素のようなユーザーのページのセクションへの移動を助けるグループ化されたノードとやり取りすることができたり、ボタンのようなインタラクティブなノードとやり取りすることができる
 
-Interactive accessibility nodes may also have certain **actions** which may be performed on them.
-For example, a button may expose a `"press"` action, and a slider may expose
-`"increment"` and `"decrement"` actions.
+それらの双方の場合において、文脈の中でのノードの役割を示すため、ノードは通常 **ラベル** （しばしば **名前** と呼ばれる）を必要とする。例えば、ボタンは "OK" や "メニュー" というラベルを持つ。
+
+アクセシビリティノードはまた現在の **値** （範囲であれば `"10"` だったり、テキスト入力であれば `"ジェーン"` であったり）のような他のプロパティを持ったり、（チェックボックスの `"checked"` または `"focused"`など）の状態の情報を持つことができる。
+
+インタラクティブなアクセシビリティノードは、それらに対して実行される特定の **アクション** も持つことができる。例えば、ボタンは `"press"` アクションを公開するし、スライダーは `"increment"` と `"decrement"` アクションを公開する。
 
 These properties and actions are referred to as the *semantics* of a node.
 Each accessibility API expresses these concepts slightly differently,
 but they are all conceptually similar.
+
+これらのプロパティとアクションはノードの *セマンティクス* と呼ばれる。各アクセシビリティAPIにおいて少しずつ違いはるが、概念的にはほとんど似ている。
 
 ##  Background: DOM tree, accessibility tree and platform accessibility APIs
 
