@@ -1,8 +1,8 @@
 ## Can I Use Accessibility Object Model (AOM)
 
-Track the implementation status of the AOM in various browsers.
+様々なブラウザーにおけるAOMの実装状況を追跡。
 
-## How to enable AOM
+## AOMを有効にする方法
 
 *Chrome*: `--enable-blink-features=AccessibilityObjectModel`
 
@@ -10,18 +10,18 @@ Track the implementation status of the AOM in various browsers.
 
 *Firefox*: `about:config accessibility.AOM.enabled = true`
 
-## Summary
+## 概要
 
-Last updated: May 8, 2018
+Last updated: 2018年5月8日
 
 | | Chrome | Safari | Firefox |
 | --- | --- | --- | --- |
-| Phase 1: Reflect ARIA attributes on DOM nodes. | **Yes**, out-of-date syntax | **No** | **No** |
-| Phase 2: Listen for input events from AT. | **Yes**, out-of-date syntax, 6 events | **Yes**, 8 events | **No** |
-| Phase 3: Build virtual accessible nodes. | **Yes**, out-of-date syntax | **No** | **No** |
-| Phase 4: Query computed accessibility tree. | **Yes**, out-of-date syntax | **No** | **Yes**, out-of-date syntax |
+| フェーズ1: ARIA属性をDOMノードに反映 | **はい**、古い構文 | **いいえ** | **いいえ** |
+| フェーズ2: ATからの入力イベントをリッスンする | **はい**、古い構文、6イベント | **はい**、8イベント | **いいえ** |
+| フェーズ3: 仮想のアクセシビリティノードを構築 | **はい**、古い構文 | **いいえ** | **いいえ** |
+| フェーズ4: 計算されたアクセシビリティツリーへ問い合わせる | **はい**、古い構文 | **いいえ** | **はい**、古い構文 |
 
-### Phase 1: Reflect ARIA attributes on DOM nodes.
+### フェーズ1: ARIA属性をDOMノードに反映
 
 *Chrome*:
 
@@ -33,7 +33,7 @@ element.accessibleNode.labeledBy.add(other.accessibleNode);
 ...
 ```
 
-### Phase 2: Listen for input events from AT.
+### フェーズ2: ATからの入力イベントをリッスンする
 
 *Chrome*:
 
@@ -59,7 +59,7 @@ element.addEventListener('accessibledismiss', ...);
 element.addEventListener('accessiblesetvalue', ...);
 ```
 
-### Phase 3: Build virtual accessible nodes.
+### フェーズ3: 仮想のアクセシビリティノードを構築
 
 *Chrome*:
 
@@ -74,7 +74,7 @@ listitem.offsetHeight = 16;
 list.accessibleNode.appendChild(listitem);
 ```
 
-### Phase 4: Query computed accessibility tree.
+### フェーズ4: 計算されたアクセシビリティツリーへ問い合わせる
 
 *Chrome*:
 
