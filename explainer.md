@@ -2,38 +2,43 @@
 
 **著者:**
 
-* Alice Boxhall, Google, aboxhall@google.com
-* James Craig, Apple, jcraig@apple.com
-* Dominic Mazzoni, Google, dmazzoni@google.com
-* Alexander Surkov, Mozilla, surkov.alexander@gmail.com
+- Alice Boxhall, Google, aboxhall@google.com
+- James Craig, Apple, jcraig@apple.com
+- Dominic Mazzoni, Google, dmazzoni@google.com
+- Alexander Surkov, Mozilla, surkov.alexander@gmail.com
+
+**Table of Contents**
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
 
-  - [はじめに](#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB)
-  - [モチベーションとなるユースケース](#%E3%83%A2%E3%83%81%E3%83%99%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%A8%E3%81%AA%E3%82%8B%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9)
-  - [アクセシビリティオブジェクトモデル](#%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%83%A2%E3%83%87%E3%83%AB)
-    - [ARIA属性を反映する](#aria%E5%B1%9E%E6%80%A7%E3%82%92%E5%8F%8D%E6%98%A0%E3%81%99%E3%82%8B)
-    - [要素の参照を反映する](#%E8%A6%81%E7%B4%A0%E3%81%AE%E5%8F%82%E7%85%A7%E3%82%92%E5%8F%8D%E6%98%A0%E3%81%99%E3%82%8B)
-      - [ユースケース 2: IDREFsを使用することなく関係プロパティを設定する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-2-idrefs%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AA%E3%81%8F%E9%96%A2%E4%BF%82%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B)
-    - [カスタム要素のAPI](#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%A0%E8%A6%81%E7%B4%A0%E3%81%AEapi)
-      - [ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B91-%E9%9D%9E%E5%8F%8D%E6%98%A0%E3%81%AE%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%82%92%E3%82%A6%E3%82%A7%E3%83%96%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E3%81%AB%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B)
-        - [customElements.define() を利用したデフォルトセマンティクス](#customelementsdefine-%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%9F%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%BB%E3%83%9E%E3%83%B3%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9)
-        - [`ElementInternals` オブジェクトを利用した動的なインスタンス単位のセマンティクス](#elementinternals-%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%92%E5%88%A9%E7%94%A8%E3%81%97%E3%81%9F%E5%8B%95%E7%9A%84%E3%81%AA%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E5%8D%98%E4%BD%8D%E3%81%AE%E3%82%BB%E3%83%9E%E3%83%B3%E3%83%86%E3%82%A3%E3%82%AF%E3%82%B9)
-    - [支援技術からのユーザーアクションイベント](#%E6%94%AF%E6%8F%B4%E6%8A%80%E8%A1%93%E3%81%8B%E3%82%89%E3%81%AE%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%A2%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88)
-      - [新しい入力イベントタイプ](#%E6%96%B0%E3%81%97%E3%81%84%E5%85%A5%E5%8A%9B%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E3%82%BF%E3%82%A4%E3%83%97)
-      - [ユースケース 3: 支援技術からのイベントをリッスンする](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-3-%E6%94%AF%E6%8F%B4%E6%8A%80%E8%A1%93%E3%81%8B%E3%82%89%E3%81%AE%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E3%82%92%E3%83%AA%E3%83%83%E3%82%B9%E3%83%B3%E3%81%99%E3%82%8B)
-    - [仮想アクセシビリティノード](#%E4%BB%AE%E6%83%B3%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%8E%E3%83%BC%E3%83%89)
-      - [ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B94-dom%E3%81%A7%E3%81%AA%E3%81%84%E4%BB%AE%E6%83%B3%E3%81%AE%E3%83%8E%E3%83%BC%E3%83%89%E3%82%92%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%AB%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B)
-    - [`ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認](#computedaccessiblenode-%E3%81%AB%E3%82%88%E3%82%8B%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%AE%E5%AE%8C%E5%85%A8%E3%81%AA%E7%A2%BA%E8%AA%8D)
-      - [ユースケース5: 計算されたツリーを確認する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B95-%E8%A8%88%E7%AE%97%E3%81%95%E3%82%8C%E3%81%9F%E3%83%84%E3%83%AA%E3%83%BC%E3%82%92%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B)
-      - [なぜ最終的に計算されたプロパティにアクセスするのか](#%E3%81%AA%E3%81%9C%E6%9C%80%E7%B5%82%E7%9A%84%E3%81%AB%E8%A8%88%E7%AE%97%E3%81%95%E3%82%8C%E3%81%9F%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%81%AB%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%99%E3%82%8B%E3%81%AE%E3%81%8B)
-    - [このAPIの対象者](#%E3%81%93%E3%81%AEapi%E3%81%AE%E5%AF%BE%E8%B1%A1%E8%80%85)
-    - [`AccessibleNode`に何が起こったのか?](#accessiblenode%E3%81%AB%E4%BD%95%E3%81%8C%E8%B5%B7%E3%81%93%E3%81%A3%E3%81%9F%E3%81%AE%E3%81%8B)
-  - [次のステップ](#%E6%AC%A1%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97)
-    - [インキュベーション](#%E3%82%A4%E3%83%B3%E3%82%AD%E3%83%A5%E3%83%99%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
-  - [謝辞](#%E8%AC%9D%E8%BE%9E)
+- [はじめに](#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB)
+- [モチベーションとなるユースケース](#%E3%83%A2%E3%83%81%E3%83%99%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%A8%E3%81%AA%E3%82%8B%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9)
+- [アクセシビリティオブジェクトモデル](#%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%83%A2%E3%83%87%E3%83%AB)
+  - [ARIA属性を反映する](#aria%E5%B1%9E%E6%80%A7%E3%82%92%E5%8F%8D%E6%98%A0%E3%81%99%E3%82%8B)
+    - [Spec/implementation status](#specimplementation-status)
+  - [要素の参照を反映する](#%E8%A6%81%E7%B4%A0%E3%81%AE%E5%8F%82%E7%85%A7%E3%82%92%E5%8F%8D%E6%98%A0%E3%81%99%E3%82%8B)
+    - [ユースケース 2: IDREFsを使用することなく関係プロパティを設定する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-2-idrefs%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AA%E3%81%8F%E9%96%A2%E4%BF%82%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B)
+    - [Spec/implementation status](#specimplementation-status-1)
+  - [`ElementInternals`オブジェクトによるカスタム要素のデフォルトセマンティクス](#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%A0%E8%A6%81%E7%B4%A0%E3%81%AEapi)
+    - [ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B91-%E9%9D%9E%E5%8F%8D%E6%98%A0%E3%81%AE%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%82%92%E3%82%A6%E3%82%A7%E3%83%96%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E3%81%AB%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B)
+    - [Spec/implementation status](#specimplementation-status-2)
+  - [支援技術からのユーザーアクションイベント](#%E6%94%AF%E6%8F%B4%E6%8A%80%E8%A1%93%E3%81%8B%E3%82%89%E3%81%AE%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%A2%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88)
+    - [新しい入力イベントタイプ](#%E6%96%B0%E3%81%97%E3%81%84%E5%85%A5%E5%8A%9B%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E3%82%BF%E3%82%A4%E3%83%97)
+    - [ユースケース 3: 支援技術からのイベントをリッスンする](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-3-%E6%94%AF%E6%8F%B4%E6%8A%80%E8%A1%93%E3%81%8B%E3%82%89%E3%81%AE%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E3%82%92%E3%83%AA%E3%83%83%E3%82%B9%E3%83%B3%E3%81%99%E3%82%8B)
+    - [Spec/implementation status](#specimplementation-status-3)
+  - [仮想アクセシビリティノード](#%E4%BB%AE%E6%83%B3%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%8E%E3%83%BC%E3%83%89)
+    - [ユースケース4; DOMでない仮想のノードをアクセシビリティツリーに追加する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B94-dom%E3%81%A7%E3%81%AA%E3%81%84%E4%BB%AE%E6%83%B3%E3%81%AE%E3%83%8E%E3%83%BC%E3%83%89%E3%82%92%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%AB%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B)
+    - [Spec/implementation status](#specimplementation-status-4)
+  - [`ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認](#computedaccessiblenode-%E3%81%AB%E3%82%88%E3%82%8B%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%AE%E5%AE%8C%E5%85%A8%E3%81%AA%E7%A2%BA%E8%AA%8D)
+    - [ユースケース5: 計算されたツリーを確認する](#%E3%83%A6%E3%83%BC%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B95-%E8%A8%88%E7%AE%97%E3%81%95%E3%82%8C%E3%81%9F%E3%83%84%E3%83%AA%E3%83%BC%E3%82%92%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B)
+    - [Spec/implementation status](#specimplementation-status-5)
+    - [なぜ最終的に計算されたプロパティにアクセスするのか](#%E3%81%AA%E3%81%9C%E6%9C%80%E7%B5%82%E7%9A%84%E3%81%AB%E8%A8%88%E7%AE%97%E3%81%95%E3%82%8C%E3%81%9F%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%81%AB%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%99%E3%82%8B%E3%81%AE%E3%81%8B)
+  - [このAPIの対象者](#%E3%81%93%E3%81%AEapi%E3%81%AE%E5%AF%BE%E8%B1%A1%E8%80%85)
+  - [`AccessibleNode`に何が起こったのか?](#accessiblenode%E3%81%AB%E4%BD%95%E3%81%8C%E8%B5%B7%E3%81%93%E3%81%A3%E3%81%9F%E3%81%AE%E3%81%8B)
+- [次のステップ](#%E6%AC%A1%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97)
+  - [インキュベーション](#%E3%82%A4%E3%83%B3%E3%82%AD%E3%83%A5%E3%83%99%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)
+- [謝辞](#%E8%AC%9D%E8%BE%9E)
 - [付録](#%E4%BB%98%E9%8C%B2)
   - [背景: 支援技術とアクセシビリティツリー](#%E8%83%8C%E6%99%AF-%E6%94%AF%E6%8F%B4%E6%8A%80%E8%A1%93%E3%81%A8%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC)
     - [アクセシビリティノードプロパティ](#%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%8E%E3%83%BC%E3%83%89%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3)
@@ -41,6 +46,8 @@
     - [ネイティブHTMLをアクセシビリティツリーにマッピングする](#%E3%83%8D%E3%82%A4%E3%83%86%E3%82%A3%E3%83%96html%E3%82%92%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B7%E3%83%93%E3%83%AA%E3%83%86%E3%82%A3%E3%83%84%E3%83%AA%E3%83%BC%E3%81%AB%E3%83%9E%E3%83%83%E3%83%94%E3%83%B3%E3%82%B0%E3%81%99%E3%82%8B)
     - [ARIA](#aria)
   - [付録: `AccessibleNode` の命名](#%E4%BB%98%E9%8C%B2-accessiblenode-%E3%81%AE%E5%91%BD%E5%90%8D)
+  - [Appendix: Partial proposed IDL for virtual accessibility nodes](#appendix-partial-proposed-idl-for-virtual-accessibility-nodes)
+  - [Appendix: partial proposed IDL for `ComputedAccessibleNode`](#appendix-partial-proposed-idl-for-computedaccessiblenode)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -55,17 +62,17 @@
 ウェブ上でできることの境界を押し広げているウェブアプリケーションは、APIが不十分なためそれらをアクセシブルにするため苦闘している。特に、ブラウザとやりとりするネイティブAPIと比較して表現力に劣っている。
 
 1. ページの著者が上書きできる[ウェブコンポーネント](https://developer.mozilla.org/en-US/docs/Web/Web_Components)のデフォルトアクセシビリティプロパティの設定
-    - 現在、ウェブコンポーネントのデフォルトセマンティクスを定義するにはARIAを使用しなければならない。
-    これにより、真に詳細な実装であるARIA属性がDOMに「リーク」してしまう。
-    - このことは必要では _なく_ ウェブコンポーネントに限られる _かも_ 知れない。
+   - 現在、ウェブコンポーネントのデフォルトセマンティクスを定義するにはARIAを使用しなければならない。
+   これにより、真に詳細な実装であるARIA属性がDOMに「リーク」してしまう。
+   - このことは _必要ではなく_ ウェブコンポーネントに限られる _かも_ 知れない。
 2. IDREFs を必要としない[関係属性](https://www.w3.org/TR/wai-aria-1.1/#attrs_relationships)の設定
-    - 現在、いくつかのARIAの関係を示すには、著者が一意のIDを関係の対象となりうる要素に指定しなければならない
-    - [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.1/#aria-activedescendant)のような場合、
-    それはUIに応じて、数百ないしは数千もの要素のうち、一つを参照するかもしれない。
-    この要求は、多くの余分なDOMの属性が必要となり、これらのAPIを複雑にする。
+   - 現在、いくつかのARIAの関係を示すには、著者が一意のIDを関係の対象となりうる要素に指定しなければならない
+   - [`aria-activedescendant`](https://www.w3.org/TR/wai-aria-1.1/#aria-activedescendant)のような場合、
+   それはUIに応じて、数百ないしは数千もの要素のうち、一つを参照するかもしれない。
+   この要求は、多くの余分なDOMの属性が必要となり、これらのAPIを複雑にする。
 3. 支援技術からのイベントをリスニングする
    - 現在、組み込み要素 _だけ_ がイベントに反応することができ、
-   通常、[「simulated click」](https://developer.android.com/reference/android/view/accessibility/AccessibilityEvent.html#TYPE_VIEW_CLICKED) や [「increment」](https://developer.apple.com/documentation/objectivec/nsobject/1615076-accessibilityincrement) のようなユーザーアクションによって引き起こされる。
+   通常、[「increment」](https://developer.apple.com/documentation/objectivec/nsobject/1615076-accessibilityincrement) のようなユーザーアクションによって引き起こされる。
 4. アクセシビリティツリーにDOMでないノード（仮想ノード）を追加する
    - 例えば、`<canvas>` 要素で構築された複雑なUIや、`<video>` 要素を用いたリモートデスクトップのストリーミングなどを表現するなど
    - そのためには、少なくとも要素と同じようなアクセシビリティプロパティや、他の仮想ノードとの親/子/その他の関係性、位置や次元を表す必要がある。
@@ -82,13 +89,18 @@
 
 ARIA 属性をHTML要素に[反映する](https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflect)。
 
-これは今[ARIA 1.2の仕様](https://www.w3.org/TR/wai-aria-1.2/#idl-interface)の一部となった。
-
 ```js
 el.role = "button";
 el.ariaPressed = "true";  // aria-pressed は3つのステートを持つ属性
 el.ariaDisabled = true;   // aria-disabled は true/false を持つ属性
 ```
+
+#### Spec/implementation status
+
+This is now a part of the [ARIA 1.2 spec](https://www.w3.org/TR/wai-aria-1.2/#idl-interface).
+
+This is shipping in Safari,
+and implemented behind a flag (`enable-experimental-web-platform-features`) in Chrome.
 
 ### 要素の参照を反映する
 
@@ -101,7 +113,7 @@ el.ariaDescribedBy = "id1";
 結果は
 
 ```html
-<div aria-describedby="id1">
+<div aria-describedby="id1"></div>
 ```
 
 要素を参照する非反映のプロパティでAPIを拡張することを提案する。
@@ -111,11 +123,14 @@ el.ariaDescribedByElements = [labelElement1, labelElement2];
 el.ariaActiveDescendantElement = ownedElement1;
 ```
 
+> Note: the `Element` or `Element` suffixes are a naming choice
+> for the reflected property,
+> and do not imply that there will be both string and Element properties
+> for the same attribute.
+
 これにより、関係に属するそれぞれの要素にグローバルに固有なID属性を割り当てることなく要素間のセマンティクスの関係性を示すことができる。
 
 さらにこれは、`ShadowRoot`を使用した著者がShadow DOMの境界を超えて関係性を明示することを可能にする
-
-このAPIはWHATWG HTML仕様の変更として提案されている。
 
 #### ユースケース 2: IDREFsを使用することなく関係プロパティを設定する
 
@@ -137,7 +152,7 @@ el.ariaActiveDescendantElement = ownedElement1;
 
 これは失敗で、なぜならIDREFsはshadowRoot、またはそれらが現れる文書の文脈の範囲に限られる。
 
-著者は代わりにこの関係性をプログラムで示すことができる。
+要素参照を利用することで著者は代わりにこの関係性をプログラムで示すことができる。
 
 ```js
 const input = comboBox.shadowRoot.querySelector("input");
@@ -147,11 +162,32 @@ input.activeDescendantElement = optionList.firstChild;
 
 このことにより、関係が自然に表現されるようになる。
 
-このAPIはWHATWG HTMLリポジトリの[issue #3513](https://github.com/whatwg/html/issues/3515#issuecomment-413716944)で議論されている。
+#### Spec/implementation status
 
-### カスタム要素のAPI
+- このAPIはWHATWG HTML使用の変更として[提案されている](https://github.com/whatwg/html/issues/3515)。
+- There is an [open PR](https://github.com/whatwg/html/pull/3917) on the HTML spec
+  fleshing out the details for this API.
+- This is used in the [ARIA editor's draft](https://w3c.github.io/aria/#AriaAttributes).
+- This is [currently being implemented in Blink](https://www.chromestatus.com/feature/6244885579431936).
 
-カスタム要素の著者が `customElements.define()` オプションを用いて静的なデフォルトセマンティクス、または設定されたコールバックを用いて動的に要素ごとのセマンティクスを提供できることを提案する。
+### Default semantics for Custom Elements via the `ElementInternals` object
+
+We propose that Custom Element authors be able to provide default semantics
+via the `ElementInternals` object.
+
+A custom element author may use the `ElementInternals` object
+to modify the semantic state of an instance of a custom element
+in response to user interaction.
+
+The properties set on the `ElementInternals` object
+are used when mapping the element to an accessible object.
+
+If the author-provided semantics conflict with the Custom Element semantics,
+the author-provided semantics take precedence.
+
+> Note: this is analogous to setting an "instance variable" -
+> a copy of these semantic properties is created for each instance of the custom element.
+> The semantics defined in each apply only to their associated custom element instance object.
 
 #### ユースケース1: 非反映のデフォルトアクセシビリティプロパティをウェブコンポーネントに設定する
 
@@ -167,159 +203,214 @@ input.activeDescendantElement = optionList.firstChild;
 
 <!-- カスタム要素がセマンティクスを表すために余分な属性を「生やす」ことを強制される -->
 <custom-tablist role="tablist">
-  <custom-tab selected role="tab" aria-selected="true" aria-controls="tabpanel-1">Tab 1</custom-tab>
+  <custom-tab
+    selected
+    role="tab"
+    aria-selected="true"
+    aria-controls="tabpanel-1"
+    >Tab 1</custom-tab
+  >
   <custom-tab role="tab" aria-controls="tabpanel-2">Tab 2</custom-tab>
-  <custom-tab role="tab" aria-controle="tabpanel-3">Tab 3</custom-tab>
+  <custom-tab role="tab" aria-controls="tabpanel-3">Tab 3</custom-tab>
 </custom-tablist>
 ```
 
-##### customElements.define() を利用したデフォルトセマンティクス
-
-著者は `CustomElementRegistry.define()` メソッドに渡された `ElementDefinitionOptions` オブジェクトを利用して、不変のデフォルトセマンティクスをカスタム要素に提供することもできる。
-
-`ElementDefinitionOptions` オブジェクトに設定されたプロパティは、カスタム要素をアクセシブルなオブジェクトにマッピングする際に、デフォルトの値として利用される。
-
-注: これは「不変なクラス変数」を作るのに類似している。これらのセマンティクスプロパティはカスタム要素の定義に関連付けられていて、カスタム要素のインスタンスには関連していない。
-
-定義されたセマンティクスは *すべての* カスタム要素のインスタンスに適用される。
-
-例えば、カスタムタブコントロールを作成する著者は、タブ、タブリスト、タブパネルの3つのカスタム要素を個々に定義することができる。
-
-```js
-class TabListElement extends HTMLElement { ... }
-customElements.define("custom-tablist", TabListElement,
-                      { role: "tablist", ariaOrientation: "horizontal" });
-
-class TabElement extends HTMLElement { ... }
-customElements.define("custom-tab", TabElement,
-                      { role: "tab" });
-
-class TabPanelElement extends HTMLElement { ... }
-customElements.define("custom-tabpanel", TabPanelElement,
-                      { role: "tabpanel" });
-```
-
-`<custom-tab>` がアクセシビリティツリーにマッピングされるとき、タブのロールがデフォルトでマッピングされる。
-
-これは `button` 要素がデフォルトでボタンのロールを持ってアクセシビリティオブジェクトにマッピングされるのに似ている。
-
-##### `ElementInternals` オブジェクトを利用した動的なインスタンス単位のセマンティクス
-
-これは[W3C Web Componentsプロジェクトの一部として議論されている](https://github.com/w3c/webcomponents/issues/758).
-
-カスタム要素の著者は `ElementInternals` オブジェクトを、ユーザーインタラクションに応じてカスタム要素のインスタンスのセマンティクスの状態を変更するのに利用できる。
-
-`ElementInternals` オブジェクトにセットされたプロパティはアクセシビリティオブジェクトに要素をマッピングされる際に利用される。
-
-注: これは「インスタンス変数」を設定するのに類似している。セマンティクスプロパティのコピーはカスタム要素のインスタンス毎に作られる。それぞれに定義されたセマンティクスは関連するカスタム要素のインスタンスオブジェクトにのみ関連付けられる。
+Using `ElementInternals` to set the default semantics,
+a Custom Element may avoid needing to sprout attributes,
+and also avoid losing its semantics if authors decide to delete ARIA attributes.
 
 ```js
 class CustomTab extends HTMLElement {
-  #internals = null;
-  #tablist = null;
-  #tabpanel = null;
-
   constructor() {
     super();
-    this.#internals = customElements.createInternals(this);
-    this.#internals.role = "tab";
+    this._internals = customElements.createInternals(this);
+    this._internals.role = "tab";
   }
 
   // カスタム「active」属性を監視する
-  static get observedAttributes() { return ["active"]; }
+  static get observedAttributes() {
+    return ["active"];
+  }
 
   connectedCallback() {
-    this.#tablist = this.parentElement;
+    this._tablist = this.parentElement;
   }
 
   setTabPanel(tabpanel) {
     if (tabpanel.localName !== "custom-tabpanel" || tabPanel.id === "")
       return;  // 静かに失敗する
 
-    this.#tabpanel = tabpanel;
+    this._tabpanel = tabpanel;
     tabpanel.setTab(this);
-    this.#internals.ariaControls = tabPanel;    // 反映されない
+    this._internals.ariaControls = tabPanel; // 反映されない
   }
 
   // 属性に反映するカスタムプロパティの setters/getters
 
   attributeChangedCallback(name, oldValue, newValue) {
-    switch(name) {
+    switch (name) {
       case "active":
-        let active = (newValue != null);
-        this.#tabpanel.shown = active;
+        let active = newValue != null;
+        this._tabpanel.shown = active;
 
         // カスタム「active」属性が変更された時、
         // アクセシブルな「selected」ステートを同期し続ける
-        this.#internals.ariaSelected = (newValue !== null);
+        this._internals.ariaSelected = newValue !== null;
 
-        if (selected)
-          this.#tablist.setSelectedTab(this);  // 他のタブが 「active」で無いことを保証
+        if (selected) this._tablist.setSelectedTab(this); // 他のタブが 「active」で無いことを保証
         break;
     }
   }
 }
 
-customElements.define("custom-tab", CustomTab, { role: "tab", needsElementInternals: true });
+customElements.define("custom-tab", CustomTab);
 ```
 
 これらの要素を使用する著者は通常通りARIAを用いてデフォルトセマンティクスを上書きすることができる。
 
-例えば、著者は `<custom-tablist>` 要素の見た目を縦並びに変更できる。彼らはそれを示すために `aria-orientation` 属性を追加することで、カスタム要素に定義されているデフォルトセマンティクスを上書きすることができる。
+例えば、著者は `<custom-tablist>` 要素の見た目を縦並びに変更できる。彼らはそれを示すために `aria-orientation` 属性を追加することで、カスタム要素に実装されているデフォルトセマンティクスを上書きすることができる。
+
+```js
+class CustomTabList extends HTMLElement {
+  constructor() {
+    super();
+    this._internals = customElements.createInternals(this);
+    this._internals.role = "tablist";
+    this._internals.ariaOrientation = "horizontal";
+  }
+
+  // ...
+}
+
+customElements.define("custom-tablist", CustomTabList);
+```
 
 ```html
 <custom-tablist aria-orientation="vertical" class="vertical-tablist">
   <custom-tab selected>Tab 1</custom-tab>
   <custom-tab>Tab 2</custom-tab>
   <custom-tab>Tab 3</custom-tab>
-</div>
+</custom-tablist>
 ```
 
-著者が提供するロールがデフォルトのロールを上書きするので、それぞれの場合においてマッピングされるロールは著者が提供するロールに基づく。
+#### Spec/implementation status
 
-仮に著者によって提供されたセマンティクスがカスタム要素のセマンティクスと競合する場合でも著者が提供するセマンティクスが優先される。
+- There is an [open PR](https://github.com/whatwg/html/pull/4658) on the WHATWG HTML spec.
+- This is [currently being implemented in Blink](https://chromestatus.com/feature/5962105603751936).
 
 ### 支援技術からのユーザーアクションイベント
 
-支援技術ユーザーのプライバシーを保護するために、通常、支援技術からのイベントは合成されたDOMイベントを発生させる。
+支援技術ユーザーのプライバシーを保護するために、通常、支援技術からのイベントは合成されたDOMイベントを発生させる。The events are determined by
+platform conventions and partially documented in the [ARIA Authoring Practices Guide (APG)](https://www.w3.org/TR/wai-aria-practices/#aria_ex).
 
-| **支援技術のイベント** | **ターゲット** | **DOMイベント** |
-|---------------------|--------------|----------------|
-| `click`             | *すべての要素* | `click` |
-| `focus`             | *すべての要素* | `focus` |
-| `select`            | `cell` または `option` ロールがマッピングされた要素 | `click` |
-| `scrollIntoView`    | (n/a) | イベントなし |
-| `dismiss`           | *すべての要素* | `Escape` キーのキーが押されたシーケンス |
-| `contextMenu`       | *すべての要素* | `contextmenu` |
-| `scrollByPage`      | *すべての要素* | スクロール方向に応じた `PageUp` または `PageDown` キーが押されたシーケンス |
-| `increment`         | `progressbar`、 `scrollbar`、 `slider` または `spinbutton` ロールがマッピングされた要素 | `Up` キーのキーが押されたシーケンス |
-| `decrement`         | `progressbar`、 `scrollbar`、 `slider` または `spinbutton` ロールがマッピングされた要素 | `Down` キーが押されたシーケンス |
-| `setValue`          | `combobox`、 `scrollbar`、 `slider` または `textbox` キーが押されたシーケンス | 未定  |
+| **支援技術のイベント** | **ターゲット** | Orientation/Direction | **DOMイベント** |
+| ------------------ | ----------- | --------------------- | ------------- |
+| `click` or `press` | _すべての要素_ |                       | `click` MouseEvent |
+| `focus` | _all focusable elements_ |                       | `focus` Event |
+| `blur` | No targets, as `blur` could potentially 'out' AT users. |                       | None |
+| `select`              | Elements whose computed role supports `aria-selected` |                       | `click` MouseEvent                 |
+| `dismiss` or `escape` | _すべての要素_ |                       | `Escape` KeyboardEvent             |
+| `contextMenu`         | _すべての要素_ |                       | `contextmenu` MouseEvent           |
+| `increment`           | Elements w/ computed role `progressbar`, `scrollbar`, or `slider` | vertical              | `Up` KeyboardEvent                 |
+|                       | ""                                                                | horizontal LTR        | `Right` KeyboardEvent              |
+|                       | ""                                                                | horizontal RTL        | `Left` KeyboardEvent               |
+|                       | Elements w/ computed role `spinbutton`                            | orientation n/a       | `Up` KeyboardEvent                 |
+| `decrement`           | Elements w/ computed role `progressbar`, `scrollbar`, or `slider` | vertical              | `Down` KeyboardEvent               |
+|                       | ""                                                                | horizontal LTR        | `Left` KeyboardEvent               |
+|                       | ""                                                                | horizontal RTL        | `Right` KeyboardEvent              |
+|                       | Elements w/ computed role `spinbutton`                            | orientation n/a       | `Down` KeyboardEvent               |
+| `scrollByPage`        | TBD (possibly custom scroll views)                                |                       | TBD (possibly `PageUp`/`PageDown`) |
+| `scrollIntoView`      | TBD                                                               |                       | No equivalent DOM event            |
+| `setValue`            | n/a                                                               |                       | No equivalent DOM event            |
 
-#### 新しい入力イベントタイプ
+#### Notes on the previous table:
+- DOM KeyboardEvent sequences include keyup/keydown.
+- DOM MouseEvent sequences include mousedown/mouseup and touchstart/touchend where relevant.
+- `contextmenu` sequence may need to include MouseEvents, including `mousedown`/`mouseup`/`auxclick`/`contextmenu`.
+- Control orientation is determined by the computed value of `aria-orientation` which
+  defaults to `horizontal` for `progressbar` and `slider`, and defaults to `vertical` for
+  `scrollbar`.
+- Natural language direction is determined by the computed value of `dir` which usualy computes to
+  to `ltr` (`auto` in most contexts resolves to `ltr`), but can be set to `rtl` for languages such
+  as Arabic and Hebrew.
+- The DOM event target for DOM KeyboardEvent sequences is the currently focused DOM element,
+  regardless if the AT's "point of regard" matches the document.activeElement.
+- If a web author does not cancel the DOM event with `Event.preventDefault()` and/or
+  `Event.stopPropagation()`, the DOM event should propagate out of the web view an potentially
+  trigger the platform behavior of the assistive technology event. For example, if an iOS
+  user triggers a native dismiss/escape event but the web author does not capture or cancel the
+  DOM Escape key sequence, the browser or system should execute the default functionality of the
+  native `accessibilityPerformEscape()` handler.
+
+
+#### MouseEvent Object Properties
+
+| **MouseEvent** | **`button`**        | **`target`/`srcElement`** | **`which` (deprecated)** |
+| -------------- | ------------------- | ------------------------- | ------------------------ |
+| click          | 1                   | TBD                       | 1                        |
+| contextmenu    | 2 (secondary click) | TBD                       | 3 (legacy right click)   |
+
+Note: Only send the deprecated `which` property if the user agent would normally send it on a non-synthesized mouse event.
+
+Note: The `target` and `srcElement` properties should match the most likely element in the case of a non-synthesized MouseEvent (a real mouse click). Since AT focus targets and pointer event targets do not always align one-to-one, this event property is currently TBD. For example, users agents might attempt to synthesize a pointer event x/y position near the center of the element in AT focus. If hit-testing at that x/y position does not return a descendant of the element in AT focus, user agents might synthesize the event on the element directly in AT focus.
+
+
+
+#### KeyboardEvent Object Properties
+
+| **KeyEvent** | **`key`**    | **`code`**   | **`location`**                | **`target`/`srcElement`** |
+| ------------ | ------------ | ------------ | ----------------------------- | ------------------------- |
+| Escape       | "Escape"     | "Escape"     | DOM_KEY_LOCATION_STANDARD (0) | `document.activeElement`  |
+| Left         | "ArrowLeft"  | "ArrowLeft"  | DOM_KEY_LOCATION_STANDARD (0) | `document.activeElement`  |
+| Up           | "ArrowUp"    | "ArrowUp"    | DOM_KEY_LOCATION_STANDARD (0) | `document.activeElement`  |
+| Right        | "ArrowRight" | "ArrowRight" | DOM_KEY_LOCATION_STANDARD (0) | `document.activeElement`  |
+| Down         | "ArrowDown"  | "ArrowDown"  | DOM_KEY_LOCATION_STANDARD (0) | `document.activeElement`  |
+
+The `target` and `srcElement` properties should match `document.activeElement`, which is either the currently focused element or `document.body`.
+
+
+#### Deprecated KeyboardEvent Object Properties (Optional)
+
+Only send these deprecated properties if the user agent would normally send them on non-synthesized keyboard events.
+
+| **KeyEvent** | **`charCode`** | **`keyCode`** | **`keyIdentifier`**                 | **`keyLocation`** | **`which`** |
+| ------------ | -------------- | ------------- | ----------------------------------- | ----------------- | ----------- |
+| Escape       | 0              | 27            | U+001B (Unicode Character 'ESCAPE') | 0                 | 27          |
+| Left         | 0              | 37            | `Left`                              | 0                 | 37          |
+| Up           | 0              | 38            | `Up`                                | 0                 | 38          |
+| Right        | 0              | 39            | `Right`                             | 0                 | 39          |
+| Down         | 0              | 40            | `Down`                              | 0                 | 40          |
+
+
+Note: These event property tables are intended to assist implementors during the incubation process. This is not intended as a normative specification.
+
+
+#### Speculative: New InputEvent types
+
+Note: This section is speculative, as there is now no immediate plan to include InputEvents 
+for Assistive Technology Actions.
 
 いくつかの[`Input Event`](https://www.w3.org/TR/uievents/#inputevent) タイプを追加する:
 
-* `increment`
-* `decrement`
-* `dismiss`
-* `scrollPageUp`
-* `scrollPageDown`
+- `increment`
+- `decrement`
+- `dismiss`
+- `scrollPageUp`
+- `scrollPageDown`
 
-これらのイベントは上記の表に記載された合成キーボードイベントと共に支援技術のイベントから引き起こされ、
-また上記の関連する支援技術のイベントに対応した有効なターゲットの文脈の中で発生したときに合成される。
+これらのイベントは上記の表に記載された合成キーボードイベントと共に支援技術のイベントから引き起こされ、また上記の関連する支援技術のイベントに対応した有効なターゲットの文脈の中で発生したときに合成される。
 
 例えば、もしある文脈で支援技術を使用していないユーザーが `Escape` キーを押した場合、キーが押されたシーケンスで `dismiss` タイプを伴った `input` イベントが発火する。
 
-もし同じユーザーが `<input type="range">` *または* （計算された `slider` ロールを含む）`slider` ロールを持った要素上にフォーカスがある `Up` キーを押した場合、キーが押されたシーケンスで `increment` タイプを伴った `input` イベントがフォーカスされた要素で発火される。
+もし同じユーザーが `<input type="range">` _または_ （計算された `slider` ロールを含む）`slider` ロールを持った要素上にフォーカスがある `Up` キーを押した場合、キーが押されたシーケンスで `increment` タイプを伴った `input` イベントがフォーカスされた要素で発火される。
 
 #### ユースケース3: 支援技術からのイベントをリッスンする
 
 例えば:
 
-* ユーザーは音声制御ソフトウェアを利用しており、ウェブページの中のどこかのボタンの名前を読み上げられる。音声制御ソフトウェアはアクセシビリティツリーの中に該当する名前があるボタンを見つけ、クリックすることで *アクション* を送信することができる。
-* 同じユーザーはあるページをスクロールダウンする音声コマンドを発行する。その音声制御ソフトウェアはウェブページのルート要素を見つけ、スクロール *アクション* を送信する。
-* モバイルスクリーンリーダーユーザーは、スライダーに移動し、範囲に基づいたコントロールを増加させるジェスチャーを実行することができる。スクリーンリーダーはアクセシビリティツリーの中のスライダー要素にブラウザーに増加 *アクション* を送信する。
+- ユーザーは音声制御ソフトウェアを利用しており、ウェブページの中のどこかのボタンの名前を読み上げられる。音声制御ソフトウェアはアクセシビリティツリーの中に該当する名前があるボタンを見つけ、クリックすることで _アクション_ を送信することができる。
+- 同じユーザーはあるページをスクロールダウンする音声コマンドを発行する。その音声制御ソフトウェアはウェブページのルート要素を見つけ、スクロール _アクション_ を送信する。
+- モバイルスクリーンリーダーユーザーは、スライダーに移動し、範囲に基づいたコントロールを増加させるジェスチャーを実行することができる。スクリーンリーダーはアクセシビリティツリーの中のスライダー要素にブラウザーに増加 _アクション_ を送信する。
 
 現在、ブラウザーはネイティブHTML要素の組み込みサポートを実装することによって、アクセシビリティアクションを一部実装している。（例えばネイティブHTMLの `<input type="range">` はすでに増加・減少アクションをサポートし、テキストボックスは値を設定したりテキストを挿入するアクションをサポートしている。）
 
@@ -342,55 +433,15 @@ customSlider.addEventListener('keydown', (event) => {
 });
 ```
 
+#### Spec/implementation status
+
+Not yet specced or implemented anywhere.
+
 ### 仮想アクセシビリティノード
 
 **仮想アクセシビリティノード** は著者に、支援技術に特定のDOM要素に直接関係のない *仮想* のアクセシビリティノードに触れさせられることができる。
 
 このメカニズムは、著者がカスタム描画APIのアクセシビリティをよりきめ細かくコントロールするためにネイティブアクセシビリティAPIによく存在する。
-
-```IDL
-// AccessibuleNode は仮想のアクセシビリティノードを表している。
-interface AccessibleNode {
-    attribute DOMString? role;
-    attribute DOMString? name;
-
-    attribute DOMString? autocomplete;
-    // ... その他すべてのARIAと同等の属性
-
-    // 仮想ノードのためだけの重要なARIAと同等でない属性
-    attribute DOMString? offsetLeft;
-    attribute DOMString? offsetTop;
-    attribute DOMString? offsetWidth;
-    attribute DOMString? offsetHeight;
-    attribute AccessibleNode? offsetParent;
-
-    // アクセシブルフォーカスだけの影響
-    boolean focusable;
-
-    // ツリーをたどる
-    readonly attribute AccessibleNode? parent;
-    readonly attribute ComputedAccessibleNode? firstChild;
-    readonly attribute ComputedAccessibleNode? lastChild;
-    readonly attribute ComputedAccessibleNode? previousSibling;
-    readonly attribute ComputedAccessibleNode? nextSibling;
-
-    // アクション
-    void focus();
-
-    // ツリーの変更
-    AccessibleNode insertBefore(AccessibleNode node, Node? child);
-    AccessibleNode appendChild(AccessibleNode node);
-    AccessibleNode replaceChild(AccessibleNode node, AccessibleNode child);
-    AccessibleNode removeChild(AccessibleNode child);
-};
-
-```
-
-```idl
-partial interface Element {
-  AccessibleNode attachAccessibleRoot();
-}
-```
 
 - `attachAccessibleRoot()` を実行することで `AccessibleNode` が `Node` に関連付けられる。
   - リターンされた `AccessibleNode` は仮想アクセシビリティツリーのルートを形成する。
@@ -406,11 +457,11 @@ partial interface Element {
 // canvas ベースのスプレッドシートのセマンティクスを実現する
 canvas.attachAccessibleRoot();
 let table = canvas.accessibleRoot.appendChild(new AccessibleNode());
-table.role = 'table';
+table.role = "table";
 table.colCount = 10;
 table.rowcount = 100;
 let headerRow = table.appendChild(new AccessibleNode());
-headerRow.role = 'row';
+headerRow.role = "row";
 headerRow.rowindex = 0;
 // などなど
 ```
@@ -445,50 +496,36 @@ virtualNode.focus();
 
 DOM要素のフォーカスが変わった時、アクセシブルフォーカスも追従し、DOM要素に関連付けられたアクセシブルノードがフォーカスされる。
 
+#### Spec/implementation status
+
+Not yet specced or implemented anywhere.
+
 ### `ComputedAccessibleNode` によるアクセシビリティツリーの完全な確認
 
-```idl
-partial interface Window {
-  [NewObject] ComputedAccessibleNode getComputedAccessibleNode(Element el);
-}
-```
+This API is still being considered.
 
-```idl
-interface ComputedAccessibleNode {
-    // アクセシビリティノードと同じだが、読み取り専用
-    readonly attribute DOMString? role;
-    readonly attribute DOMString? name;
-
-    readonly attribute DOMString? autocomplete;
-    // ... その他すべてのARIAと同等の属性
-
-    // ARIAと同等でない属性
-    readonly attribute DOMString? offsetLeft;
-    readonly attribute DOMString? offsetTop;
-    readonly attribute DOMString? offsetWidth;
-    readonly attribute DOMString? offsetHeight;
-    readonly attribute AccessibleNode? offsetParent;
-    readonly boolean focusable;
-
-    readonly attribute AccessibleNode? parent;
-    readonly attribute ComputedAccessibleNode? firstChild;
-    readonly attribute ComputedAccessibleNode? lastChild;
-    readonly attribute ComputedAccessibleNode? previousSibling;
-    readonly attribute ComputedAccessibleNode? nextSibling;
-};
-
-```
+It may be approached initially as a testing-only API.
 
 #### ユースケース5: 計算されたツリーを確認する
 
 **計算されたアクセシビリティツリー** APIは著者に、完全な計算されたアクセシビリティツリーにアクセスすることを許可する。それぞれのDOM要素に関連付けられたアクセシビリティノードのすべての計算されたプロパティに加え、仮想ノードを含む計算された木構造を走査可能にする。
 
 このことは次のことを可能にする:
-* ページ、または要素のセマンティックプロパティが確からしいかを確認するプログラムによるテストを書くこと
-* ブラウザーベースの信頼できる支援技術の構築。例えば、アクセシビリティツリーを利用したスクリーンリーダー、スクリーンルーペ、または他の支援機能を持ったブラウザー拡張やページ内ツール。
-* アクセシビリティプロパティが（ARIAなどを通じて）要素に正しく適用されたかを検査する。例えば、ブラウザが特定のバージョンのARIAに対応しているかを検査できる。
-* アクセシビリティツリーの問題をコンソールベースでデバッグしたりチェックしたりする。
-* アクセシビリティツリーの状態に反応する。例えば要素に表されたロールを検査したり、アクセシブルなヘルプテキストを変更したりなど。
+- ページ、または要素のセマンティックプロパティが確からしいかを確認するプログラムによるテストを書くこと
+- ブラウザーベースの信頼できる支援技術の構築。例えば、アクセシビリティツリーを利用したスクリーンリーダー、スクリーンルーペ、または他の支援機能を持ったブラウザー拡張やページ内ツール。
+- アクセシビリティプロパティが（ARIAなどを通じて）要素に正しく適用されたかを検査する。例えば、ブラウザが特定のバージョンのARIAに対応しているかを検査できる。
+- アクセシビリティツリーの問題をコンソールベースでデバッグしたりチェックしたりする。
+- アクセシビリティツリーの状態に反応する。例えば要素に表されたロールを検査したり、アクセシブルなヘルプテキストを変更したりなど。
+
+#### Spec/implementation status
+
+A purely experimental implementation exists in Blink,
+via the command-line flag `--enable-blink-features="AccessibilityObjectModel"`.
+
+This adds a method to `Window`, `getComputedAccessibleNode(node)`,
+which returns the computed accessible properties for the given node.
+
+This implementation is not reliable and may be removed at any point.
 
 #### なぜ最終的に計算されたプロパティにアクセスするのか
 
@@ -554,23 +591,26 @@ ARIAがWeb上のアクセシビリティプロパティのための構造的な�
 
 ## 謝辞
 
-価値のあるフィードバックや助言、ツールを提供してくれた
+価値のあるフィードバックや助言、ツールを提供してくれた次の方々に多大な感謝を。
 
-* Alex Russell
-* Bogdan Brinza
-* Chris Fleizach
-* Cynthia Shelley
-* David Bolter
-* Domenic Denicola
-* Elliott Sprehn
-* Ian Hickson
-* Joanmarie Diggs
-* Marcos Caceres
-* Nan Wang
-* Robin Berjon
-* Tess O'Connor
-
-に多大な感謝を。
+- Alex Russell
+- Anne van Kesteren
+- Bogdan Brinza
+- Chris Fleizach
+- Chris Hall
+- Cynthia Shelley
+- David Bolter
+- Domenic Denicola
+- Elliott Sprehn
+- Ian Hickson
+- Joanmarie Diggs
+- Marcos Caceres
+- Meredith Lane
+- Nan Wang
+- Robin Berjon
+- Rossen Atanassov
+- Ryosuke Niwa
+- Tess O'Connor
 
 マイクロソフトの Bogdan Brinza と Cynthia Shelley は現在は積極的に参加していないが、この仕様の最初の草案に貢献した。
 
@@ -586,7 +626,7 @@ ARIAがWeb上のアクセシビリティプロパティのための構造的な�
 
 ![アプリケーションUIからアクセシビリティツリー、支援技術、ユーザーまでの流れ](images/a11y-tree.png)
 
-代替インターフェースの *出力* （例えば、音声やトーン、[点字ディスプレイ](https://en.wikipedia.org/wiki/Refreshable_braille_display)の更新、[スクリーンルーペ](https://en.wikipedia.org/wiki/Screen_magnifier)のフォーカスの移動)、また *入力* （例えば、キーボードショートカット、ジェスチャー、点字ルーティングキー、[スイッチ機器](https://en.wikipedia.org/wiki/Switch_access)、音声入力など）は完全に支援技術の責務で、アプリケーションの役割ではない。
+代替インターフェースの _出力_ （例えば、音声やトーン、[点字ディスプレイ](https://en.wikipedia.org/wiki/Refreshable_braille_display)の更新、[スクリーンルーペ](https://en.wikipedia.org/wiki/Screen_magnifier)のフォーカスの移動)、また _入力_ （例えば、キーボードショートカット、ジェスチャー、点字ルーティングキー、[スイッチ機器](https://en.wikipedia.org/wiki/Switch_access)、音声入力など）は完全に支援技術の責務で、アプリケーションの役割ではない。
 
 例えば、OS Xのネイティブアプリケーションを使用する[VoiceOver](https://www.apple.com/voiceover/info/guide/)ユーザーは、「control、option、スペースバー」キーの組み合わせ押す。それはスクリーンリーダーが現在いるUI要素をクリックするということを示す。
 
@@ -613,13 +653,13 @@ ARIAがWeb上のアクセシビリティプロパティのための構造的な�
 
 インタラクティブなアクセシビリティノードは、それらに対して実行される特定の **アクション** も持つことができる。例えば、ボタンは `"press"` アクションを公開するし、スライダーは `"increment"` と `"decrement"` アクションを公開する。
 
-これらのプロパティとアクションはノードの *セマンティクス* と呼ばれる。各アクセシビリティAPIにおいて少しずつ違いはるが、概念的にはほとんど似ている。
+これらのプロパティとアクションはノードの _セマンティクス_ と呼ばれる。各アクセシビリティAPIにおいて少しずつ違いはるが、概念的にはほとんど似ている。
 
 ## 背景: DOMツリー、アクセシビリティツリー、そしてプラットフォームのアクセシビリティAPI
 
 ウェブはアクセシブルなアプリケーションを制作するのに多くのサポートを提供しているが、それらは *宣言的* なAPIを通じてのみである。
 
-DOMツリーは並行して主にページの視覚的な表現とアクセシビリティツリーに変換される。アクセシビリティツリーは、一つまたは複数の *プラットフォーム固有の* アクセシビリティAPIを介してアクセスされる。
+DOMツリーは並行して主にページの視覚的な表現とアクセシビリティツリーに変換される。アクセシビリティツリーは、一つまたは複数の _プラットフォーム固有の_ アクセシビリティAPIを介してアクセスされる。
 
 ![HTMLがDOMツリーに変換され、されに視覚的なUIとアクセシビリティツリーに変換される](images/DOM-a11y-tree.png)
 
@@ -645,9 +685,9 @@ DOMツリーは並行して主にページの視覚的な表現とアクセシ�
 
 この名前を選ぶ際、簡潔さと明確さ、そして普遍性の間のバランスを取ろうとした。
 
-* 簡潔さ: 名前は可能な限り短くある必要がある
-* 明確さ: 名前は、分かりにくい略語や短縮形を利用せず、APIの機能を反映している必要がある
-* 普遍性: 名前は仕様の範囲を制限したり狭め過ぎたりしてはいけない
+- 簡潔さ: 名前は可能な限り短くある必要がある
+- 明確さ: 名前は、分かりにくい略語や短縮形を利用せず、APIの機能を反映している必要がある
+- 普遍性: 名前は仕様の範囲を制限したり狭め過ぎたりしてはいけない
 
 以下に、真剣に提案されたすべての名前のそれぞれの長所と短所を簡潔にまとめた。
 
@@ -664,3 +704,84 @@ DOMツリーは並行して主にページの視覚的な表現とアクセシ�
 `AccessibleElement`    | 非常に明確                              | さらに長い; 混乱する (他の `Element` はアクセシブルではない?)
 `AccessibilityNode`    | 非常に明確                              | 非常に長い; 初めてのときに 'accessibility' を正確にタイプできる人はこの星にいない
 `AccessibilityElement` | 非常に明確                              | 笑えるほど長い; まだ 'accessibility' とタイプしないといけない
+
+
+## Appendix: Partial proposed IDL for virtual accessibility nodes
+
+```IDL
+// An AccessibleNode represents a virtual accessible node.
+interface AccessibleNode {
+    attribute DOMString? role;
+    attribute DOMString? name;
+
+    attribute DOMString? autocomplete;
+    // ... all other ARIA-equivalent attributes
+
+    // Non-ARIA equivalent attributes necessary for virtual nodes only
+    attribute DOMString? offsetLeft;
+    attribute DOMString? offsetTop;
+    attribute DOMString? offsetWidth;
+    attribute DOMString? offsetHeight;
+    attribute AccessibleNode? offsetParent;
+
+    // Only affects accessible focus
+    boolean focusable;
+
+    // Tree walking
+    readonly attribute AccessibleNode? parent;
+    readonly attribute ComputedAccessibleNode? firstChild;
+    readonly attribute ComputedAccessibleNode? lastChild;
+    readonly attribute ComputedAccessibleNode? previousSibling;
+    readonly attribute ComputedAccessibleNode? nextSibling;
+
+    // Actions
+    void focus();
+
+    // Tree modification
+    AccessibleNode insertBefore(AccessibleNode node, Node? child);
+    AccessibleNode appendChild(AccessibleNode node);
+    AccessibleNode replaceChild(AccessibleNode node, AccessibleNode child);
+    AccessibleNode removeChild(AccessibleNode child);
+};
+
+```
+
+```idl
+partial interface Element {
+  AccessibleNode attachAccessibleRoot();
+}
+```
+
+## Appendix: partial proposed IDL for `ComputedAccessibleNode`
+
+```idl
+interface ComputedAccessibleNode {
+    // Same set of attributes as AccessibleNode, but read-only
+    readonly attribute DOMString? role;
+    readonly attribute DOMString? name;
+
+    readonly attribute DOMString? autocomplete;
+    // ... all other ARIA-equivalent attributes
+
+    // Non-ARIA equivalent attributes
+    readonly attribute DOMString? offsetLeft;
+    readonly attribute DOMString? offsetTop;
+    readonly attribute DOMString? offsetWidth;
+    readonly attribute DOMString? offsetHeight;
+    readonly attribute AccessibleNode? offsetParent;
+    readonly boolean focusable;
+
+    readonly attribute AccessibleNode? parent;
+    readonly attribute ComputedAccessibleNode? firstChild;
+    readonly attribute ComputedAccessibleNode? lastChild;
+    readonly attribute ComputedAccessibleNode? previousSibling;
+    readonly attribute ComputedAccessibleNode? nextSibling;
+};
+
+```
+
+```idl
+partial interface Window {
+  [NewObject] ComputedAccessibleNode getComputedAccessibleNode(Element el);
+}
+```

@@ -5,18 +5,18 @@
 ## AOMを有効にする方法
 
 **Chrome**:
-*`AccessibleNode`/`ComputedAccessibleNode` に関連する機能:*
-
-```--enable-blink-features=AccessibilityObjectModel```
+*`AccessibleNode`/`ComputedAccessibleNode` に関連する機能:*<br>
+`--enable-blink-features=AccessibilityObjectModel`
 
 *ウェブプラットフォームに関連する機能:*
 `chrome://flags`に遷移し `enable-experimental-web-platform-features` を利用可能にする。
 
 **Safari Technology Preview**:
-```開発 > 実験的な機能 > Accessibility Object Model```
+`開発 > 実験的な機能 > Accessibility Object Model`
 
 **Firefox**:
-```about:config accessibility.AOM.enabled = true```
+
+`about:config accessibility.AOM.enabled = true`
 
 ## 概要
 
@@ -24,9 +24,9 @@
 
 | | Chrome | Safari | Firefox |
 | --- | --- | --- | --- |
-| Phase 1: ARIA属性をDOMノードに反映 | **Yes**, experimental-web-platform-features フラグが必要 | **Yes** | **No** |
+| Phase 1: ARIA属性をDOMノードに反映 | **Yes** | **Yes** | **No** |
 | Phase 1: IDREF属性に要素の参照を反映 | **No** | **No** | **No** |
-| Phase 1: `ElementInternals` 上のカスタム要素のセマンティクス  | **No** | **No** | **No** |
+| Phase 1: `ElementInternals` 上のカスタム要素のセマンティクス  | **Yes** | **No** | **No** |
 | Phase 2: 支援技術のアクションのフォールバックイベントを生成 | **No** | **No** | **No** |
 | Phase 2: 新しい入力イベントタイプ | **No** | **No** | **No** |
 | Phase 3: 仮想のアクセシビリティノードを構築 | **Yes**, 古い文法 | **No** | **No** |
@@ -138,7 +138,7 @@ customSlider.addEventListener("decrement", function(event) {
 
 *Chrome (古い文法, `--enable-blink-features=AccessibilityObjectModel` を適用)*:
 
-```
+```js
 var listitem = new AccessibleNode();
 listitem.role = "listitem";
 listitem.offsetParent = list.accessibleNode;
@@ -155,13 +155,13 @@ list.accessibleNode.appendChild(listitem);
 
 *Chrome (未確定の記法, `--enable-blink-features=AccessibilityObjectModel` を適用)*:
 
-```
+```js
 var c = await window.getComputedAccessibleNode(element);
 console.log(c.role);
 console.log(c.label);
 ```
 
 *Firefox (古い記法)*:
-```
+```js
 console.log(element.accessibleNode.computedRole);
 ```
